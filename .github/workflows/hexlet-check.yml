@@ -14,7 +14,7 @@ jobs:
       - name: Hexlet project check
         uses: hexlet/project-action@release
 
-      -name: tests
+      - name: tests
         run: npm run test 
       - name: Test & publish code coverage
         # Publish code coverage on Code Climate
