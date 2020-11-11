@@ -3,7 +3,7 @@ import path from 'path';
 import _ from 'lodash';
 
 export const getData = (config) => {
-  const filepath = path.resolve(config);
+  const filepath = path.resolve(process.cwd(), config);
   const data = fs.readFileSync(filepath, 'utf8');
   return data;
 };
@@ -18,19 +18,19 @@ const genDiff = (firstConfig, secondConfig) => {
     .reduce((acc, currentKey, index, array) => {
       if (Object.prototype.hasOwnProperty.call(data1, currentKey)
       && !Object.prototype.hasOwnProperty.call(data2, currentKey)) {
-        acc.push(`-${currentKey}: ${data1[currentKey]}`);
+        acc.push(`  - ${currentKey}: ${data1[currentKey]}`);
       }
       if (!Object.prototype.hasOwnProperty.call(data1, currentKey)
       && Object.prototype.hasOwnProperty.call(data2, currentKey)) {
-        acc.push(`+${currentKey}: ${data2[currentKey]}`);
+        acc.push(`  + ${currentKey}: ${data2[currentKey]}`);
       }
       if (Object.prototype.hasOwnProperty.call(data1, currentKey)
       && Object.prototype.hasOwnProperty.call(data2, currentKey)) {
         if (data1[currentKey] === data2[currentKey]) {
-          acc.push(` ${currentKey}: ${data1[currentKey]}`);
+          acc.push(`    ${currentKey}: ${data1[currentKey]}`);
         } else if (data1[currentKey] !== data2[currentKey]) {
-          acc.push(`-${currentKey}: ${data1[currentKey]}`);
-          acc.push(`+${currentKey}: ${data2[currentKey]}`);
+          acc.push(`  - ${currentKey}: ${data1[currentKey]}`);
+          acc.push(`  + ${currentKey}: ${data2[currentKey]}`);
         }
       }
       if (index === array.length - 1) {
