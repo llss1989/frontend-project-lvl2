@@ -16,7 +16,7 @@ steps:
 - run: npm install
 - run: npm test
   env:
-    CI: true
+   CI: true
   - name: Run linter
         # Run Linter
   run: |
