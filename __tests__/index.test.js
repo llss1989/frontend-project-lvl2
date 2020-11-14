@@ -10,7 +10,7 @@ const expected = `{
   + verbose: true
 }`;
 test('basic', () => {
-  const pathOfFirstJSON = path.resolve(process.cwd(), 'files', 'package.json');
-  const pathOfsecondJSON = path.resolve(process.cwd(), 'files', 'package2.json');
+  const pathOfFirstJSON = path.resolve(process.cwd(), '__fixtures__', 'package.json');
+  const pathOfsecondJSON = path.resolve(process.cwd(), '__fixtures__', 'package2.json');
   expect(genDiff(pathOfFirstJSON, pathOfsecondJSON) === expected).toBe(true);
 });
