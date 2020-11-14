@@ -14,9 +14,3 @@ test('basic', () => {
   const pathOfsecondJSON = path.resolve(process.cwd(), 'files', 'package2.json');
   expect(genDiff(pathOfFirstJSON, pathOfsecondJSON) === expected).toBe(true);
 });
-
-test('result is String', () => {
-  const pathOfFirstJSON = path.resolve(process.cwd(), 'files', 'package.json');
-  const pathOfsecondJSON = path.resolve(process.cwd(), 'files', 'package2.json');
-  expect(genDiff(pathOfFirstJSON, pathOfsecondJSON) === expected).toBe(true);
-});

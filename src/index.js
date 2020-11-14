@@ -9,35 +9,36 @@ export const getData = (config) => {
 };
 
 const genDiff = (firstConfig, secondConfig) => {
-  const data1 = JSON.parse(getData(firstConfig));
-  const data2 = JSON.parse(getData(secondConfig));
-  const keysOfData1 = Object.keys(data1);
-  const keyOfData2 = Object.keys(data2);
-  const onionKeys = _.union(keysOfData1, keyOfData2)
+  const dataOfFirstFile = JSON.parse(getData(firstConfig));
+  const dataOfSecondFile = JSON.parse(getData(secondConfig));
+  const keysOfDataOfFirstFile = Object.keys(dataOfFirstFile);
+  const keyOfDataOfSecondFile = Object.keys(dataOfSecondFile);
+  const compareResult = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
     .sort()
     .reduce((acc, currentKey, index, array) => {
-      if (Object.prototype.hasOwnProperty.call(data1, currentKey)
-      && !Object.prototype.hasOwnProperty.call(data2, currentKey)) {
-        acc.push(`  - ${currentKey}: ${data1[currentKey]}`);
+      const indexOfLastElement = array.length - 1;
+      if (Object.prototype.hasOwnProperty.call(dataOfFirstFile, currentKey)
+      && !Object.prototype.hasOwnProperty.call(dataOfSecondFile, currentKey)) {
+        acc.push(`  - ${currentKey}: ${dataOfFirstFile[currentKey]}`);
       }
-      if (!Object.prototype.hasOwnProperty.call(data1, currentKey)
-      && Object.prototype.hasOwnProperty.call(data2, currentKey)) {
-        acc.push(`  + ${currentKey}: ${data2[currentKey]}`);
+      if (!Object.prototype.hasOwnProperty.call(dataOfFirstFile, currentKey)
+      && Object.prototype.hasOwnProperty.call(dataOfSecondFile, currentKey)) {
+        acc.push(`  + ${currentKey}: ${dataOfSecondFile[currentKey]}`);
       }
-      if (Object.prototype.hasOwnProperty.call(data1, currentKey)
-      && Object.prototype.hasOwnProperty.call(data2, currentKey)) {
-        if (data1[currentKey] === data2[currentKey]) {
-          acc.push(`    ${currentKey}: ${data1[currentKey]}`);
-        } else if (data1[currentKey] !== data2[currentKey]) {
-          acc.push(`  - ${currentKey}: ${data1[currentKey]}`);
-          acc.push(`  + ${currentKey}: ${data2[currentKey]}`);
+      if (Object.prototype.hasOwnProperty.call(dataOfFirstFile, currentKey)
+      && Object.prototype.hasOwnProperty.call(dataOfSecondFile, currentKey)) {
+        if (dataOfFirstFile[currentKey] === dataOfSecondFile[currentKey]) {
+          acc.push(`    ${currentKey}: ${dataOfFirstFile[currentKey]}`);
+        } else if (dataOfFirstFile[currentKey] !== dataOfSecondFile[currentKey]) {
+          acc.push(`  - ${currentKey}: ${dataOfFirstFile[currentKey]}`);
+          acc.push(`  + ${currentKey}: ${dataOfSecondFile[currentKey]}`);
         }
       }
-      if (index === array.length - 1) {
+      if (index === indexOfLastElement) {
         acc.push('}');
       }
       return acc;
     }, ['{']);
-  return onionKeys.join('\n');
+  return compareResult.join('\n');
 };
 export default genDiff;
