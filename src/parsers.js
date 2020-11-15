@@ -7,6 +7,7 @@ const getParseData = (data, type) => {
   if (type === '.yaml') {
     return yaml.safeLoad(data);
   }
+  return Error;
 };
 
 export default getParseData;
