@@ -14,3 +14,8 @@ test('basic', () => {
   const pathOfsecondJSON = path.resolve(process.cwd(), '__fixtures__', 'package2.json');
   expect(genDiff(pathOfFirstJSON, pathOfsecondJSON) === expected).toBe(true);
 });
+test('basic-yaml', () => {
+  const pathOfFirstFile = path.resolve(process.cwd(), '__fixtures__', 'package.yaml');
+  const pathOfSecondFile = path.resolve(process.cwd(), '__fixtures__', 'package2.yaml');
+  expect(genDiff(pathOfFirstFile, pathOfSecondFile) === expected).toBe(true);
+});

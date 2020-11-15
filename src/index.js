@@ -1,37 +1,41 @@
 import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
+import getParseData from './parsers.js';
 
 export const getData = (config) => {
+  const type = path.extname(config);
   const filepath = path.resolve(process.cwd(), config);
   const data = fs.readFileSync(filepath, 'utf8');
-  return data;
+  return [data, type];
 };
 
 const genDiff = (firstConfig, secondConfig) => {
-  const dataOfFirstFile = JSON.parse(getData(firstConfig));
-  const dataOfSecondFile = JSON.parse(getData(secondConfig));
-  const keysOfDataOfFirstFile = Object.keys(dataOfFirstFile);
-  const keyOfDataOfSecondFile = Object.keys(dataOfSecondFile);
+  const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
+  const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
+  const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
+  const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
+  const keysOfDataOfFirstFile = Object.keys(supportedDataOfFirstFile);
+  const keyOfDataOfSecondFile = Object.keys(supportedDataOfSecondFile);
   const compareResult = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
     .sort()
     .reduce((acc, currentKey, index, array) => {
       const indexOfLastElement = array.length - 1;
-      if (Object.prototype.hasOwnProperty.call(dataOfFirstFile, currentKey)
-      && !Object.prototype.hasOwnProperty.call(dataOfSecondFile, currentKey)) {
-        acc.push(`  - ${currentKey}: ${dataOfFirstFile[currentKey]}`);
+      if (Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
+      && !Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
+        acc.push(`  - ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
       }
-      if (!Object.prototype.hasOwnProperty.call(dataOfFirstFile, currentKey)
-      && Object.prototype.hasOwnProperty.call(dataOfSecondFile, currentKey)) {
-        acc.push(`  + ${currentKey}: ${dataOfSecondFile[currentKey]}`);
+      if (!Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
+      && Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
+        acc.push(`  + ${currentKey}: ${supportedDataOfSecondFile[currentKey]}`);
       }
-      if (Object.prototype.hasOwnProperty.call(dataOfFirstFile, currentKey)
-      && Object.prototype.hasOwnProperty.call(dataOfSecondFile, currentKey)) {
-        if (dataOfFirstFile[currentKey] === dataOfSecondFile[currentKey]) {
-          acc.push(`    ${currentKey}: ${dataOfFirstFile[currentKey]}`);
-        } else if (dataOfFirstFile[currentKey] !== dataOfSecondFile[currentKey]) {
-          acc.push(`  - ${currentKey}: ${dataOfFirstFile[currentKey]}`);
-          acc.push(`  + ${currentKey}: ${dataOfSecondFile[currentKey]}`);
+      if (Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
+      && Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
+        if (supportedDataOfFirstFile[currentKey] === supportedDataOfSecondFile[currentKey]) {
+          acc.push(`    ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
+        } else if (dataOfFirstFile[currentKey] !== supportedDataOfSecondFile[currentKey]) {
+          acc.push(`  - ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
+          acc.push(`  + ${currentKey}: ${supportedDataOfSecondFile[currentKey]}`);
         }
       }
       if (index === indexOfLastElement) {
