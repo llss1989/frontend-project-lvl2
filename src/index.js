@@ -10,13 +10,12 @@ export const getData = (config) => {
   return [data, type];
 };
 
-const genDiff = (firstConfig, secondConfig) => {
+export const genDiff = (firstConfig, secondConfig) => {
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
   const keysOfDataOfFirstFile = Object.keys(supportedDataOfFirstFile);
-  return supportedDataOfFirstFile;
   const keyOfDataOfSecondFile = Object.keys(supportedDataOfSecondFile);
   const compareResult = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
     .sort()
@@ -46,7 +45,6 @@ const genDiff = (firstConfig, secondConfig) => {
     }, ['{']);
   return compareResult.join('\n');
 };
-export default genDiff;
 
 const buildAst = (firstConfig, secondConfig) => {
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
@@ -59,31 +57,113 @@ const buildAst = (firstConfig, secondConfig) => {
     const ast = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
       .sort()
       .reduce((acc, currentKey) => {
-        //console.log(nodeFromFirstFile[currentKey]);
-        if (typeof (nodeFromFirstFile[currentKey]) !== 'object' || typeof (nodeFromSecondFile[currentKey]) !== 'object') {
-          acc[currentKey] = {
-            key: currentKey,
-            was: {
-              type: typeof (nodeFromFirstFile[currentKey]),
-              value: nodeFromFirstFile[currentKey],
-            },
-            became: {
-              type: typeof (nodeFromSecondFile[currentKey]),
-              value: nodeFromSecondFile[currentKey],
-            },
-          };
-          return acc;
+        acc.push({
+          "nameOfKey": currentKey,
+          "typesOfValuesOfKeys": [ Object.prototype.toString.call(nodeFromFirstFile[currentKey]) === '[object Object]' ? 'object' : nodeFromFirstFile[currentKey] === undefined ? 'OTC' : 'primitive',  
+          Object.prototype.toString.call(nodeFromSecondFile[currentKey]) === '[object Object]' ? 'object' : nodeFromSecondFile[currentKey] === undefined ? 'OTC' :'primitive' ],
+          "values": [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
+          "childrens": [],
+        });
+        if (acc[acc.length - 1]['typesOfValuesOfKeys'][0] === 'object'
+        && acc[acc.length - 1]['typesOfValuesOfKeys'][1] === 'object') {
+          acc[acc.length - 1]['childrens'].push(iter(nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]));
         }
-        if (typeof (nodeFromFirstFile[currentKey]) === 'object' && typeof (nodeFromSecondFile[currentKey]) === 'object') {
-          return iter(nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]);
-        }
-      },
-      {});
+        return acc;
+      }, []);
     return ast;
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
 
-console.log(buildAst('../__fixtures__/packageRecursive.json', '../__fixtures__/packageRecursive2.yaml'), null, '\t');
-//console.log(buildAst('../__fixtures__/package.json', '../__fixtures__/package2.json'));
+export const stylish = (ast) => {
+  const firstKeysOfAst = ast.reduce((acc, {nameOfKey,typesOfValuesOfKeys,values,childrens }) => {
+    const [valueOfKeyOfFirstFile, valueOfKeyOfSecondFile] = values;
+    const [typeOfValueOfFirstFile, typeOfValueOfSecondFile] = typesOfValuesOfKeys;
+    if (typeOfValueOfFirstFile === 'OTC' && (typeOfValueOfSecondFile === 'object' || typeOfValueOfSecondFile === 'primitive')) {
+      acc.push(`+ ${nameOfKey}: ${JSON.stringify(valueOfKeyOfSecondFile, null, ' ')}`);
+    }
+    if (typeOfValueOfSecondFile === 'OTC' && (typeOfValueOfFirstFile === 'object' || typeOfValueOfFirstFile === 'primitive')) {
+      acc.push(`- ${nameOfKey}: ${JSON.stringify(valueOfKeyOfFirstFile, null, ' ')}`);
+    }
+    if ((typeOfValueOfFirstFile === 'primitive' && typeOfValueOfSecondFile === 'object')
+    && (typeOfValueOfFirstFile === 'object' && typeOfValueOfSecondFile === 'primitive')) {
+      acc.push(`
+      - ${nameOfKey}: ${valueOfKeyOfFirstFile},
+      + ${nameOfKey}: ${valueOfKeyOfSecondFile}
+      `);
+    }
+    if (typeOfValueOfFirstFile === 'primitive' && typeOfValueOfSecondFile === 'primitive'
+    && valueOfKeyOfFirstFile === valueOfKeyOfSecondFile) {
+        acc.push(`${nameOfKey}: ${valueOfKeyOfFirstFile}`);
+    }
+    if (typeOfValueOfFirstFile === 'primitive' && typeOfValueOfSecondFile === 'primitive'
+    && valueOfKeyOfFirstFile !== valueOfKeyOfSecondFile) {
+        acc.push(`-${nameOfKey}: ${valueOfKeyOfFirstFile},
+                 + ${nameOfKey}: ${valueOfKeyOfSecondFile}`);
+    }
+    if (typeOfValueOfFirstFile === 'object' && typeOfValueOfSecondFile === 'object') {
+      acc.push(`${nameOfKey}: ${stylish(childrens[0])}`);
+    }
+    return acc;
+  },[]);
+  return firstKeysOfAst;
+};
 
+// export const stylish = (ast) => {
+//   const firstKeys = Object.keys(ast)
+//     .reduce((acc, currentKey) => {
+//       console.log(acc);
+//       if (!Array.isArray(ast[currentKey])) {
+//         if (ast[currentKey].was.type === undefined) {
+//           acc.push(`+ ${currentKey} : ${ast[currentKey].became.value}`);
+//           return acc;
+//         }
+//         if (ast[currentKey].was.type === undefined) {
+//           acc.push(`${currentKey}: ${ast[currentKey].became.value}`);
+//           return acc;
+//         } if (ast[currentKey].became.type === undefined) {
+//           acc.push(`- ${currentKey} : ${ast[currentKey].was.value}`);
+//           return acc;
+//         } if (ast[currentKey].was.value === ast[currentKey].became.value) {
+//           acc.push(`${currentKey} : ${ast[currentKey].became.value}`);
+//           return acc;
+//         } if (ast[currentKey].was.value !== undefined && ast[currentKey].became.value !== undefined
+//           && ast[currentKey].was.value !== ast[currentKey].became.value) {
+//           acc.push(`
+//             - ${currentKey}: ${ast[currentKey].was.value}
+//             + ${currentKey}: ${ast[currentKey].became.value}`);
+//           return acc;
+//         }
+//       }
+//       if (Array.isArray(ast[currentKey])) {
+//         acc.push(stylish(ast[currentKey][0]));
+//         return acc;
+//       }
+//       return acc;
+//     }, []);
+//   return firstKeys;
+// };
+const ast = buildAst('../__fixtures__/packageRecursive.json', '../__fixtures__/packageRecursive2.json');
+console.log(stylish(ast))
+
+// console.log(JSON.stringify(ast, null, ' '))
+// console.log(buildAst('../__fixtures__/package.json', '../__fixtures__/package2.json'));
+
+// const iter = (currentNode) => {
+//   const initialKeys = Object.keys(currentNode)
+//     .reduce((acc, currentKey) => {
+//       if (!Array.isArray(currentNode[currentKey])) {
+//         if (currentNode[currentKey].was.value === currentNode[currentKey].became.value) {
+//           acc.push(`${currentNode[currentKey].key} : ${currentNode[currentKey].became.value}`);
+//         }
+//            if (currentNode[currentKey].was.type === undefined) {
+//             acc.push(`+ ${currentNode[currentKey].key} : ${currentNode[currentKey].became.value}`);
+//           }
+//            if (currentNode[currentKey].became.type === undefined) {
+//             acc.push(`- ${currentNode[currentKey].key} : ${currentNode[currentKey].was.value}`);
+//           }
+//          }
+//          return acc;
+//         }
+//          , [])
+// return iter(ast);
