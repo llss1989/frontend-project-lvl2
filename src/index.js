@@ -73,10 +73,10 @@ const buildAst = (firstConfig, secondConfig) => {
           acc[acc.length - 1].value = nodeFromFirstFile[currentKey];
         }
         if ((typeOfFirstFile === 'primitive' && typeOfSecondFile === 'primitive')) {
-          acc[acc.length - 1].status = 'no_changed';
-          acc[acc.length - 1].value = nodeFromFirstFile[currentKey];
+          acc[acc.length - 1].status = nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'changed';
+          acc[acc.length - 1].value = acc[acc.length - 1].status === 'changed' ? [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]] : nodeFromSecondFile[currentKey];
         }
-        if ((typeOfFirstFile=== 'object' && typeOfSecondFile === 'primitive')
+        if ((typeOfFirstFile === 'object' && typeOfSecondFile === 'primitive')
         || (typeOfFirstFile === 'primitive' && typeOfSecondFile === 'object')) {
           acc[acc.length - 1].status = 'changed';
           acc[acc.length - 1].value = [nodeFromFirstFile[currentKey],
@@ -94,5 +94,44 @@ const buildAst = (firstConfig, secondConfig) => {
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
 
-const ast = buildAst('../__fixtures__/packageRecursive.json', '../__fixtures__/packageRecursive2.json');
-console.log(JSON.stringify(ast, null, ' '));
+const ast1 = buildAst('../__fixtures__/packageRecursive.json', '../__fixtures__/packageRecursive2.json');
+// console.log(JSON.stringify(ast1, null, ' '));
+
+const stylish = (ast) => {
+  const iter = ( node, result) => {
+    for (const currentNode of node) {
+    }
+  }
+  return iter(ast, '');
+};
+
+console.log(stylish(ast1))
+
+// ast.reduce((acc, {
+//   nameOfKey, depth, status, value, childrens,
+// }) => {
+// if (childrens.length === 0) {
+//   if (status === 'added') {
+//     acc += `
+//   + ${nameOfKey}: ${value}`;
+//   return acc;
+//   }
+//   if (status === 'deleted') {
+//     acc += `
+//   - ${nameOfKey}: ${value}`;
+//     return acc;
+//   }
+//   if (status === 'no_changed') {
+//     acc += `
+//     ${nameOfKey}: ${value}`;
+//      return acc;
+//   }
+//   acc += `
+//   - ${nameOfKey}: ${value[0]}
+//   + ${nameOfKey}: ${value[1]}`;
+//   return acc;
+// }
+// if (childrens.length !== 0) {
+//   return stylish(childrens[0]);
+// }
+// }, '');
