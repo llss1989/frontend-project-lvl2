@@ -98,40 +98,29 @@ const ast1 = buildAst('../__fixtures__/packageRecursive.json', '../__fixtures__/
 // console.log(JSON.stringify(ast1, null, ' '));
 
 const stylish = (ast) => {
-  const iter = ( node, result) => {
-    for (const currentNode of node) {
+  const result = [];
+  for (const node of ast) {
+    if (node.childrens.length === 0) {
+      const currentFormatValue = Object.prototype.toString.call(node.value === '[object Object]') ? JSON.stringify(node.value, null, '\t') : node.value;
+      if (node.status === 'added') {
+        result.push(`${'  '.repeat(node.depth)}+ ${node.nameOfKey}: ${currentFormatValue}`);
+      }
+      if (node.status === 'deleted') {
+        result.push(`${'  '.repeat(node.depth)}- ${node.nameOfKey}: ${currentFormatValue}`);
+      }
+      if (node.status === 'no_changed') {
+        result.push(`${'  '.repeat(node.depth)}  ${node.nameOfKey}: ${currentFormatValue}`);
+      }
+      if (node.status === 'changed') {
+        const currentFormatValueForChangedStatus = [Object.prototype.toString.call(node.value[0] === '[object Object]') ? JSON.stringify(node.value[0], null, '\t') : node.value[0], 
+        Object.prototype.toString.call(node.value[1] === '[object Object]') ? JSON.stringify(node.value[1], null, '\t') : node.value[1]];
+        result.push(`${'  '.repeat(node.depth)}- ${node.nameOfKey}: ${currentFormatValueForChangedStatus[0]}\n${'  '.repeat(node.depth)}+ ${node.nameOfKey}: ${currentFormatValueForChangedStatus[1]}`);
+      }
+    }
+    if (node.childrens.length === 1) {
+
+    	result.push(`${'  '.repeat(node.depth)}${node.nameOfKey}: {\n${stylish(node.childrens[0])}\n${'  '.repeat(node.depth)}}`);
     }
   }
-  return iter(ast, '');
+  return result.join('\n');
 };
-
-console.log(stylish(ast1))
-
-// ast.reduce((acc, {
-//   nameOfKey, depth, status, value, childrens,
-// }) => {
-// if (childrens.length === 0) {
-//   if (status === 'added') {
-//     acc += `
-//   + ${nameOfKey}: ${value}`;
-//   return acc;
-//   }
-//   if (status === 'deleted') {
-//     acc += `
-//   - ${nameOfKey}: ${value}`;
-//     return acc;
-//   }
-//   if (status === 'no_changed') {
-//     acc += `
-//     ${nameOfKey}: ${value}`;
-//      return acc;
-//   }
-//   acc += `
-//   - ${nameOfKey}: ${value[0]}
-//   + ${nameOfKey}: ${value[1]}`;
-//   return acc;
-// }
-// if (childrens.length !== 0) {
-//   return stylish(childrens[0]);
-// }
-// }, '');
