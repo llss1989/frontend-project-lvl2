@@ -2,14 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import getParseData from './parsers.js';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-
 
 export const getData = (config) => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
   const type = path.extname(config);
   const filepath = path.resolve(process.cwd(), config);
   const data = fs.readFileSync(filepath, 'utf8');
@@ -52,6 +46,15 @@ export const genDiff = (firstConfig, secondConfig) => {
   return compareResult.join('\n');
 };
 
+const getTypeOfValue = (currentValue) => {
+  if (typeof (currentValue) === 'object') {
+    return 'object';
+  }
+  if (typeof (currentValue) === 'undefined') {
+    return 'OTC';
+  }
+  return 'primitive';
+};
 export const buildAst = (firstConfig, secondConfig) => {
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
@@ -63,33 +66,33 @@ export const buildAst = (firstConfig, secondConfig) => {
     const ast = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
       .sort()
       .reduce((acc, currentKey) => {
-        const typeOfFirstFile = Object.prototype.toString.call(nodeFromFirstFile[currentKey]) === '[object Object]' ? 'object' : nodeFromFirstFile.hasOwnProperty(currentKey) ? 'primitive' : 'OTC';
-        const typeOfSecondFile = Object.prototype.toString.call(nodeFromSecondFile[currentKey]) === '[object Object]' ? 'object' : nodeFromSecondFile.hasOwnProperty(currentKey) ? 'primitive' : 'OTC';
+        const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
+        const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
         acc.push({
           nameOfKey: currentKey,
           depth: nestling,
           childrens: [],
         });
-        if (typeOfFirstFile === 'OTC' && (typeOfSecondFile === 'primitive' || 'object')) {
+        if (typeOfKeyValueFromFirstFile === 'OTC' && (typeOfKeyValueFromSecondFile === 'primitive' || 'object')) {
           acc[acc.length - 1].status = 'added';
           acc[acc.length - 1].value = nodeFromSecondFile[currentKey];
         }
-        if ((typeOfFirstFile === 'primitive' || 'object') && typeOfSecondFile === 'OTC') {
+        if ((typeOfKeyValueFromFirstFile === 'primitive' || 'object') && typeOfKeyValueFromSecondFile === 'OTC') {
           acc[acc.length - 1].status = 'deleted';
           acc[acc.length - 1].value = nodeFromFirstFile[currentKey];
         }
-        if ((typeOfFirstFile === 'primitive' && typeOfSecondFile === 'primitive')) {
+        if ((typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'primitive')) {
           acc[acc.length - 1].status = nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'changed';
           acc[acc.length - 1].value = acc[acc.length - 1].status === 'changed' ? [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]] : nodeFromSecondFile[currentKey];
         }
-        if ((typeOfFirstFile === 'object' && typeOfSecondFile === 'primitive')
-        || (typeOfFirstFile === 'primitive' && typeOfSecondFile === 'object')) {
+        if ((typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'primitive')
+        || (typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'object')) {
           acc[acc.length - 1].status = 'changed';
           acc[acc.length - 1].value = [nodeFromFirstFile[currentKey],
             nodeFromSecondFile[currentKey]];
         }
-        if (typeOfFirstFile === 'object'
-        && typeOfSecondFile === 'object') {
+        if (typeOfKeyValueFromFirstFile === 'object'
+        && typeOfKeyValueFromSecondFile === 'object') {
           acc[acc.length - 1].childrens = iter(nodeFromFirstFile[currentKey],
             nodeFromSecondFile[currentKey], nestling + 1);
         }
@@ -100,50 +103,50 @@ export const buildAst = (firstConfig, secondConfig) => {
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
 
-const getValue = (value, depth) => {
+const getValue = (valueKey, depth) => {
   const currentIndent = '  '.repeat(depth * 2);
-  const closeBracketIndent = '  '.repeat(depth * 2 - 2) 
-  if (typeof(value) !== 'object' || value === null) {
-    return `${value}`;
+  const closeBracketIndent = '  '.repeat(depth * 2 - 2);
+  if (typeof (valueKey) !== 'object' || valueKey === null) {
+    return `${valueKey}`;
   }
-  const lines = Object.entries(value).map(([key, value]) => `${currentIndent}${key}: ${getValue(value, depth + 1)}`);
+  const lines = Object.entries(valueKey).map(([key, currentValue]) => `${currentIndent}${key}: ${getValue(currentValue, depth + 1)}`);
   return ['{',
-  ...lines,
-`${closeBracketIndent}}`].join('\n')
+    ...lines,
+    `${closeBracketIndent}}`].join('\n');
 };
 
 export const stylish = (ast) => {
-  const iter = (ast) => {
-    const lines = ast.reduce((acc, node) => {
-     const currentIndent =  node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
-     if (node.childrens.length === 0) {
-       if (node.status === 'added') {
-         acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value,  node.depth + 1)}`);
-       }
-       if (node.status === 'deleted') {
-         acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value,  node.depth + 1)}`);
-       }
-       if (node.status === 'no_changed') {
-         acc.push(`${currentIndent}  ${node.nameOfKey}: ${getValue(node.value,  node.depth + 1)}`);
-       }
-       if (node.status === 'changed') {
-         acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value[0], node.depth + 1)}`);
-         acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value[1], node.depth + 1)}`);
-       }
-     }
-     if (node.childrens.length !== 0) {
-       acc.push(`${currentIndent}${node.nameOfKey}: {`);
-       acc.push(iter(node.childrens));
-       acc.push(`${currentIndent}}`)
-     }
-     return acc.flat(1);
+  const iter = (tree) => {
+    const lines = tree.reduce((acc, node) => {
+      const currentIndent = node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
+      if (node.childrens.length === 0) {
+        if (node.status === 'added') {
+          acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
+        }
+        if (node.status === 'deleted') {
+          acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
+        }
+        if (node.status === 'no_changed') {
+          acc.push(`${currentIndent}  ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
+        }
+        if (node.status === 'changed') {
+          acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value[0], node.depth + 1)}`);
+          acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value[1], node.depth + 1)}`);
+        }
+      }
+      if (node.childrens.length !== 0) {
+        acc.push(`${currentIndent}${node.nameOfKey}: {`);
+        acc.push(iter(node.childrens));
+        acc.push(`${currentIndent}}`);
+      }
+      return acc.flat(1);
     }, []);
     return lines;
-   }
-   const preResult = iter(ast);
-   return [
-     '\n{',
-     ...preResult,
-     '}'
-   ].join('\n')
+  };
+  const preResult = iter(ast);
+  return [
+    '\n{',
+    ...preResult,
+    '}',
+  ].join('\n');
 };
