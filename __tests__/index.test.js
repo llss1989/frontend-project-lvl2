@@ -67,9 +67,9 @@ test('basic-yaml', () => {
   expect(genDiff(pathOfFirstFile, pathOfSecondFile) === expected).toBe(true);
 });
 
-// test('basic-recursive', () => {
-//   const pathOfFirstFile = '/home/llss/Learning/Projects/Hexlet/projects/lvl2/frontend-project-lvl2/__fixtures__/packageRecursive.json';
-//   const pathOfSecondFile = '/home/llss/Learning/Projects/Hexlet/projects/lvl2/frontend-project-lvl2/__fixtures__/packageRecursive2.json';
-//   expect((stylish(buildAst(pathOfFirstFile, pathOfSecondFile))
-//     .includes(recursiveExpected))).toBe(true);
-// });
+test('basic-recursive', () => {
+  const pathOfFirstFile = '/home/llss/Learning/Projects/Hexlet/projects/lvl2/frontend-project-lvl2/__fixtures__/packageRecursive.json';
+  const pathOfSecondFile = '/home/llss/Learning/Projects/Hexlet/projects/lvl2/frontend-project-lvl2/__fixtures__/packageRecursive2.json';
+  expect((stylish(buildAst(pathOfFirstFile, pathOfSecondFile))
+    .includes(recursiveExpected))).toBe(true);
+});
