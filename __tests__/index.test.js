@@ -68,8 +68,8 @@ test('basic-yaml', () => {
 });
 
 test('basic-recursive', () => {
-  const pathOfFirstFile = '/home/llss/Learning/Projects/Hexlet/projects/lvl2/frontend-project-lvl2/__fixtures__/packageRecursive.json';
-  const pathOfSecondFile = '/home/llss/Learning/Projects/Hexlet/projects/lvl2/frontend-project-lvl2/__fixtures__/packageRecursive2.json';
+  const pathOfFirstFile = path.resolve(process.cwd(), '__fixtures__', 'packageRecursive.json');
+  const pathOfSecondFile = path.resolve(process.cwd(), '__fixtures__', 'packageRecursive.json');
   expect((stylish(buildAst(pathOfFirstFile, pathOfSecondFile))
     .includes(recursiveExpected))).toBe(true);
 });
