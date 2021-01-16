@@ -69,7 +69,7 @@ test('basic-yaml', () => {
 
 test('basic-recursive', () => {
   const pathOfFirstFile = path.resolve(process.cwd(), '__fixtures__', 'packageRecursive.json');
-  const pathOfSecondFile = path.resolve(process.cwd(), '__fixtures__', 'packageRecursive.json');
+  const pathOfSecondFile = path.resolve(process.cwd(), '__fixtures__', 'packageRecursive2.json');
   expect((stylish(buildAst(pathOfFirstFile, pathOfSecondFile))
     .includes(recursiveExpected))).toBe(true);
 });
