@@ -2,8 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import getParseData from './parsers.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+
 
 export const getData = (config) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
   const type = path.extname(config);
   const filepath = path.resolve(process.cwd(), config);
   const data = fs.readFileSync(filepath, 'utf8');
@@ -46,12 +52,12 @@ export const genDiff = (firstConfig, secondConfig) => {
   return compareResult.join('\n');
 };
 
-const buildAst = (firstConfig, secondConfig) => {
+export const buildAst = (firstConfig, secondConfig) => {
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
-  const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 0) => {
+  const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
     const ast = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
@@ -84,8 +90,8 @@ const buildAst = (firstConfig, secondConfig) => {
         }
         if (typeOfFirstFile === 'object'
         && typeOfSecondFile === 'object') {
-          acc[acc.length - 1].childrens.push(iter(nodeFromFirstFile[currentKey],
-            nodeFromSecondFile[currentKey], nestling + 1));
+          acc[acc.length - 1].childrens = iter(nodeFromFirstFile[currentKey],
+            nodeFromSecondFile[currentKey], nestling + 1);
         }
         return acc;
       }, []);
@@ -94,33 +100,50 @@ const buildAst = (firstConfig, secondConfig) => {
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
 
-const ast1 = buildAst('../__fixtures__/packageRecursive.json', '../__fixtures__/packageRecursive2.json');
-// console.log(JSON.stringify(ast1, null, ' '));
-
-const stylish = (ast) => {
-  const result = [];
-  for (const node of ast) {
-    if (node.childrens.length === 0) {
-      const currentFormatValue = Object.prototype.toString.call(node.value === '[object Object]') ? JSON.stringify(node.value, null, '\t') : node.value;
-      if (node.status === 'added') {
-        result.push(`${'  '.repeat(node.depth)}+ ${node.nameOfKey}: ${currentFormatValue}`);
-      }
-      if (node.status === 'deleted') {
-        result.push(`${'  '.repeat(node.depth)}- ${node.nameOfKey}: ${currentFormatValue}`);
-      }
-      if (node.status === 'no_changed') {
-        result.push(`${'  '.repeat(node.depth)}  ${node.nameOfKey}: ${currentFormatValue}`);
-      }
-      if (node.status === 'changed') {
-        const currentFormatValueForChangedStatus = [Object.prototype.toString.call(node.value[0] === '[object Object]') ? JSON.stringify(node.value[0], null, '\t') : node.value[0], 
-        Object.prototype.toString.call(node.value[1] === '[object Object]') ? JSON.stringify(node.value[1], null, '\t') : node.value[1]];
-        result.push(`${'  '.repeat(node.depth)}- ${node.nameOfKey}: ${currentFormatValueForChangedStatus[0]}\n${'  '.repeat(node.depth)}+ ${node.nameOfKey}: ${currentFormatValueForChangedStatus[1]}`);
-      }
-    }
-    if (node.childrens.length === 1) {
-
-    	result.push(`${'  '.repeat(node.depth)}${node.nameOfKey}: {\n${stylish(node.childrens[0])}\n${'  '.repeat(node.depth)}}`);
-    }
+const getValue = (value, depth) => {
+  const currentIndent = '  '.repeat(depth * 2);
+  const closeBracketIndent = '  '.repeat(depth * 2 - 2) 
+  if (typeof(value) !== 'object' || value === null) {
+    return `${value}`;
   }
-  return result.join('\n');
+  const lines = Object.entries(value).map(([key, value]) => `${currentIndent}${key}: ${getValue(value, depth + 1)}`);
+  return ['{',
+  ...lines,
+`${closeBracketIndent}}`].join('\n')
+};
+
+export const stylish = (ast) => {
+  const iter = (ast) => {
+    const lines = ast.reduce((acc, node) => {
+     const currentIndent =  node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
+     if (node.childrens.length === 0) {
+       if (node.status === 'added') {
+         acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value,  node.depth + 1)}`);
+       }
+       if (node.status === 'deleted') {
+         acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value,  node.depth + 1)}`);
+       }
+       if (node.status === 'no_changed') {
+         acc.push(`${currentIndent}  ${node.nameOfKey}: ${getValue(node.value,  node.depth + 1)}`);
+       }
+       if (node.status === 'changed') {
+         acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value[0], node.depth + 1)}`);
+         acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value[1], node.depth + 1)}`);
+       }
+     }
+     if (node.childrens.length !== 0) {
+       acc.push(`${currentIndent}${node.nameOfKey}: {`);
+       acc.push(iter(node.childrens));
+       acc.push(`${currentIndent}}`)
+     }
+     return acc.flat(1);
+    }, []);
+    return lines;
+   }
+   const preResult = iter(ast);
+   return [
+     '\n{',
+     ...preResult,
+     '}'
+   ].join('\n')
 };
