@@ -56,20 +56,22 @@ const expected = `{
   + verbose: true
 }`;
 
+const getPathOfFile = (nameOfFile) => path.resolve(process.cwd(), '__fixtures__', nameOfFile);
+
 test('basic', () => {
-  const pathOfFirstJSON = path.resolve(process.cwd(), '__fixtures__', 'package.json');
-  const pathOfsecondJSON = path.resolve(process.cwd(), '__fixtures__', 'package2.json');
+  const pathOfFirstJSON = getPathOfFile('package.json');
+  const pathOfsecondJSON = getPathOfFile('package2.json');
   expect(genDiff(pathOfFirstJSON, pathOfsecondJSON) === expected).toBe(true);
 });
 test('basic-yaml', () => {
-  const pathOfFirstFile = path.resolve(process.cwd(), '__fixtures__', 'package.yaml');
-  const pathOfSecondFile = path.resolve(process.cwd(), '__fixtures__', 'package2.yaml');
+  const pathOfFirstFile = getPathOfFile('package.yaml');
+  const pathOfSecondFile = getPathOfFile('package2.yaml');
   expect(genDiff(pathOfFirstFile, pathOfSecondFile) === expected).toBe(true);
 });
 
 test('basic-recursive', () => {
-  const pathOfFirstFile = path.resolve(process.cwd(), '__fixtures__', 'packageRecursive.json');
-  const pathOfSecondFile = path.resolve(process.cwd(), '__fixtures__', 'packageRecursive2.json');
+  const pathOfFirstFile = getPathOfFile('packageRecursive.json');
+  const pathOfSecondFile = getPathOfFile('packageRecursive2.json');
   expect((stylish(buildAst(pathOfFirstFile, pathOfSecondFile))
     .includes(recursiveExpected))).toBe(true);
 });
