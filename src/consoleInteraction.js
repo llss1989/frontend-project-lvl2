@@ -1,5 +1,5 @@
 import program from 'commander';
-import { genDiff } from './index.js';
+import { stylish, buildAst } from './index.js';
 
 const interfaceWithTheConsole = () => {
   program
@@ -8,7 +8,7 @@ const interfaceWithTheConsole = () => {
     .option('-f, --format [type]', 'Output format')
     .arguments('<filePath1> <filePath2>')
     .action((filePath1, filePath2) => {
-      const result = genDiff(filePath1, filePath2);
+      const result = stylish(buildAst(filePath1, filePath2));
       console.log(`\n${result}\n`);
     });
 
