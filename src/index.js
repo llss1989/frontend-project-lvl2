@@ -10,40 +10,8 @@ export const getData = (config) => {
   return [data, type];
 };
 
-export const genDiff = (firstConfig, secondConfig) => {
-  const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
-  const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
-  const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
-  const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
-  const keysOfDataOfFirstFile = Object.keys(supportedDataOfFirstFile);
-  const keyOfDataOfSecondFile = Object.keys(supportedDataOfSecondFile);
-  const compareResult = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
-    .sort()
-    .reduce((acc, currentKey, index, array) => {
-      const indexOfLastElement = array.length - 1;
-      if (Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
-      && !Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
-        acc.push(`  - ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
-      }
-      if (!Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
-      && Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
-        acc.push(`  + ${currentKey}: ${supportedDataOfSecondFile[currentKey]}`);
-      }
-      if (Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
-      && Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
-        if (supportedDataOfFirstFile[currentKey] === supportedDataOfSecondFile[currentKey]) {
-          acc.push(`    ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
-        } else if (dataOfFirstFile[currentKey] !== supportedDataOfSecondFile[currentKey]) {
-          acc.push(`  - ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
-          acc.push(`  + ${currentKey}: ${supportedDataOfSecondFile[currentKey]}`);
-        }
-      }
-      if (index === indexOfLastElement) {
-        acc.push('}');
-      }
-      return acc;
-    }, ['{']);
-  return compareResult.join('\n');
+export const genDiff = (firstConfig, secondConfig, formatName) => {
+
 };
 
 const getTypeOfValue = (currentValue) => {
@@ -101,52 +69,4 @@ export const buildAst = (firstConfig, secondConfig) => {
     return ast;
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
-};
-
-const getValue = (valueKey, depth) => {
-  const currentIndent = '  '.repeat(depth * 2);
-  const closeBracketIndent = '  '.repeat(depth * 2 - 2);
-  if (typeof (valueKey) !== 'object' || valueKey === null) {
-    return `${valueKey}`;
-  }
-  const lines = Object.entries(valueKey).map(([key, currentValue]) => `${currentIndent}${key}: ${getValue(currentValue, depth + 1)}`);
-  return ['{',
-    ...lines,
-    `${closeBracketIndent}}`].join('\n');
-};
-
-export const stylish = (ast) => {
-  const iter = (tree) => {
-    const lines = tree.reduce((acc, node) => {
-      const currentIndent = node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
-      if (node.childrens.length === 0) {
-        if (node.status === 'added') {
-          acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
-        }
-        if (node.status === 'deleted') {
-          acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
-        }
-        if (node.status === 'no_changed') {
-          acc.push(`${currentIndent}  ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
-        }
-        if (node.status === 'changed') {
-          acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value[0], node.depth + 1)}`);
-          acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value[1], node.depth + 1)}`);
-        }
-      }
-      if (node.childrens.length !== 0) {
-        acc.push(`${currentIndent}${node.nameOfKey}: {`);
-        acc.push(iter(node.childrens));
-        acc.push(`${currentIndent}}`);
-      }
-      return acc.flat(1);
-    }, []);
-    return lines;
-  };
-  const preResult = iter(ast);
-  return [
-    '\n{',
-    ...preResult,
-    '}',
-  ].join('\n');
 };

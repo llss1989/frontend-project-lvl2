@@ -1,5 +1,6 @@
 import path from 'path';
-import { genDiff, stylish, buildAst } from '../src/index.js';
+import { genDiff, buildAst } from '../src/index.js';
+import { stylish } from '../src/formatters/index.js';
 
 const recursiveExpected = `
 {
@@ -47,7 +48,8 @@ const recursiveExpected = `
     }
 }`;
 
-const expected = `{
+const expected = `
+{
   - follow: false
     host: hexlet.io
   - proxy: 123.234.53.22
@@ -59,13 +61,12 @@ const expected = `{
 const getPathOfFile = (nameOfFile) => path.resolve(process.cwd(), '__fixtures__', nameOfFile);
 
 test('basic', () => {
-  expect(genDiff(getPathOfFile('package.json'), getPathOfFile('package2.json')) === expected).toBe(true);
+  expect(stylish(buildAst(getPathOfFile('package.json'), getPathOfFile('package2.json'))) === expected).toBe(true);
 });
 test('basic-yaml', () => {
-  expect(genDiff(getPathOfFile('package.yaml'), getPathOfFile('package2.yaml')) === expected).toBe(true);
+  expect(stylish(buildAst(getPathOfFile('package.yaml'), getPathOfFile('package2.yaml'))) === expected).toBe(true);
 });
 
 test('basic-recursive', () => {
-  expect((stylish(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')))
-    .includes(recursiveExpected))).toBe(true);
+  expect((stylish(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')))) === recursiveExpected).toBe(true);
 });
