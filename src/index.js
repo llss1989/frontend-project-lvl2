@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import getParseData from './parsers.js';
-import { plain } from './formatters/index.js'
 
 export const getData = (config) => {
   const type = path.extname(config);
@@ -103,6 +102,3 @@ export const buildAst = (firstConfig, secondConfig) => {
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
-
-//  const ast = buildAst('../__fixtures__/packageRecursive.json', '../__fixtures__/packageRecursive2.json');
-//  console.log(typeof(plain(ast)));
