@@ -21,4 +21,5 @@ const interfaceWithTheConsole = () => {
   program.parse(process.argv);
 };
 
+
 export default interfaceWithTheConsole;
