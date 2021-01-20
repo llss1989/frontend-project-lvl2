@@ -98,7 +98,7 @@ export const buildAst = (firstConfig, secondConfig) => {
         }
         return acc;
       }, []);
-     return ast;
+    return ast;
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
