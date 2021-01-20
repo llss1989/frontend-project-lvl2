@@ -1,7 +1,18 @@
 import path from 'path';
-import { genDiff, buildAst } from '../src/index.js';
-import { stylish } from '../src/formatters/index.js';
+import { buildAst } from '../src/index.js';
+import { plain, stylish, json } from '../src/formatters/index.js';
 
+const testJSON = (text) => {
+  if (typeof text !== 'string') {
+    return false;
+  }
+  try {
+    JSON.parse(text);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 const recursiveExpected = `
 {
     common: {
@@ -57,6 +68,17 @@ const expected = `
   + timeout: 20
   + verbose: true
 }`;
+const plainExpected = `Property 'common.follow' was added with value: false
+Property 'common.setting2' was removed
+Property 'common.setting3' was updated. From true to null
+Property 'common.setting4' was added with value: 'blah blah'
+Property 'common.setting5' was added with value: [complex value]
+Property 'common.setting6.doge.wow' was updated. From '' to 'so much'
+Property 'common.setting6.ops' was added with value: 'vops'
+Property 'group1.baz' was updated. From 'bas' to 'bars'
+Property 'group1.nest' was updated. From [complex value] to 'str'
+Property 'group2' was removed
+Property 'group3' was added with value: [complex value]`;
 
 const getPathOfFile = (nameOfFile) => path.resolve(process.cwd(), '__fixtures__', nameOfFile);
 
@@ -69,4 +91,10 @@ test('basic-yaml', () => {
 
 test('basic-recursive', () => {
   expect((stylish(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')))) === recursiveExpected).toBe(true);
+});
+test('plain', () => {
+  expect((plain(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')))) === plainExpected).toBe(true);
+});
+test('json', () => {
+  expect(testJSON(json(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'))))).toBe(true);
 });
