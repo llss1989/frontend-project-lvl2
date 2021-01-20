@@ -57,7 +57,7 @@ const getValueForPlain = (value) => {
 export const plain = (ast) => {
   const iter = (tree, keyPath) => {
     const lines = tree.reduce((acc, currentNode) => {
-      const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}`: `${currentNode.nameOfKey}`;
+      const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}` : `${currentNode.nameOfKey}`;
       if (currentNode.childrens.length === 0 && currentNode.status !== 'no_changed') {
         if (currentNode.status === 'added') {
           acc.push(`Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`);
@@ -79,3 +79,5 @@ export const plain = (ast) => {
   };
   return iter(ast, '');
 };
+
+export const json = (ast) => JSON.stringify(ast, null, ' ');
