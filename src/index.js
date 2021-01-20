@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import getParseData from './parsers.js';
+import { plain } from './formatters/index.js'
 
 export const getData = (config) => {
   const type = path.extname(config);
@@ -10,8 +11,40 @@ export const getData = (config) => {
   return [data, type];
 };
 
-export const genDiff = (firstConfig, secondConfig, formatName) => {
-
+export const genDiff = (firstConfig, secondConfig) => {
+  const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
+  const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
+  const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
+  const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
+  const keysOfDataOfFirstFile = Object.keys(supportedDataOfFirstFile);
+  const keyOfDataOfSecondFile = Object.keys(supportedDataOfSecondFile);
+  const compareResult = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
+    .sort()
+    .reduce((acc, currentKey, index, array) => {
+      const indexOfLastElement = array.length - 1;
+      if (Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
+      && !Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
+        acc.push(`  - ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
+      }
+      if (!Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
+      && Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
+        acc.push(`  + ${currentKey}: ${supportedDataOfSecondFile[currentKey]}`);
+      }
+      if (Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
+      && Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
+        if (supportedDataOfFirstFile[currentKey] === supportedDataOfSecondFile[currentKey]) {
+          acc.push(`    ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
+        } else if (dataOfFirstFile[currentKey] !== supportedDataOfSecondFile[currentKey]) {
+          acc.push(`  - ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
+          acc.push(`  + ${currentKey}: ${supportedDataOfSecondFile[currentKey]}`);
+        }
+      }
+      if (index === indexOfLastElement) {
+        acc.push('}');
+      }
+      return acc;
+    }, ['{']);
+  return compareResult.join('\n');
 };
 
 const getTypeOfValue = (currentValue) => {
@@ -50,12 +83,12 @@ export const buildAst = (firstConfig, secondConfig) => {
           acc[acc.length - 1].value = nodeFromFirstFile[currentKey];
         }
         if ((typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'primitive')) {
-          acc[acc.length - 1].status = nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'changed';
-          acc[acc.length - 1].value = acc[acc.length - 1].status === 'changed' ? [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]] : nodeFromSecondFile[currentKey];
+          acc[acc.length - 1].status = nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated';
+          acc[acc.length - 1].value = acc[acc.length - 1].status === 'updated' ? [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]] : nodeFromSecondFile[currentKey];
         }
         if ((typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'primitive')
         || (typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'object')) {
-          acc[acc.length - 1].status = 'changed';
+          acc[acc.length - 1].status = 'updated';
           acc[acc.length - 1].value = [nodeFromFirstFile[currentKey],
             nodeFromSecondFile[currentKey]];
         }
@@ -70,3 +103,6 @@ export const buildAst = (firstConfig, secondConfig) => {
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
+
+//  const ast = buildAst('../__fixtures__/packageRecursive.json', '../__fixtures__/packageRecursive2.json');
+//  console.log(typeof(plain(ast)));
