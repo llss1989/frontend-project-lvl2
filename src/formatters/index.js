@@ -30,7 +30,7 @@ export const stylish = (ast) => {
         }
       }
       if (node.childrens.length !== 0) {
-        acc.push(`${currentIndent}${node.nameOfKey}: {`);
+        acc.push(`${currentIndent}${node.nameOfKey}: {!!`);
         acc.push(iter(node.childrens));
         acc.push(`${currentIndent}}`);
       }
