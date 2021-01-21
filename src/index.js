@@ -87,7 +87,7 @@ export const buildAst = (firstConfig, secondConfig) => {
         }
         return acc;
       }, []);
-    console.log(`${ast}ast!!!!`)
+    console.log(`${JSON.stringify(ast)}ast!!!!`)
     return ast;
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
@@ -95,7 +95,7 @@ export const buildAst = (firstConfig, secondConfig) => {
 
 const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   const ast = buildAst(firstConfig, secondConfig);
-  console.log(JSON.stringify(ast, null, ' '));
+  //console.log(JSON.stringify(ast, null, ' '));
   if (format === 'stylish') {
     //console.log(`${stylish(ast)}STYLISH!`);
     return stylish(ast);
@@ -110,7 +110,5 @@ const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   }
   throw Error('Hello from gendiff!');
 };
-
-
 
 export default genDiff;
