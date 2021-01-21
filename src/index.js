@@ -37,10 +37,10 @@ export const buildAst = (firstConfig, secondConfig) => {
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
-  if (typeof (supportedDataOfFirstFile) !== 'object') {
-    console.log(`${typeof(supportedDataOfFirstFile)}`);
-    throw Error('Hello from BuildAST!');
-  }
+  // if (typeof (supportedDataOfFirstFile) !== 'object') {
+  //   console.log(`${typeof(supportedDataOfFirstFile)}`);
+  //   throw Error('Hello from BuildAST!');
+  // }
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
