@@ -37,6 +37,8 @@ export const buildAst = (firstConfig, secondConfig) => {
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
+  console.log(`${supportedDataOfFirstFile}`);
+  console.log(`${supportedDataOfSecondFile}`);
   // if (testJSON(supportedDataOfFirstFile) !== true || testJSON(supportedDataOfSecondFile) !== true) {
   //   throw Error('Hello from BuildAST!');
   // }
