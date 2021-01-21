@@ -25,8 +25,8 @@ export const buildAst = (firstConfig, secondConfig) => {
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
-  console.log(supportedDataOfFirstFile);
-  console.log(supportedDataOfSecondFile);
+  console.log(`${supportedDataOfFirstFile}FIRST FILE!!!!`);
+  console.log(`${supportedDataOfSecondFile}SECONDFILE!!!!!!!!!!!!!!`);
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
