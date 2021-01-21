@@ -50,7 +50,7 @@ export const buildAst = (firstConfig, secondConfig) => {
         const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
         const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
         if (currentKey === 'prepareStackTrace' || currentKey === 'stackTraceLimit') {
-          continue;
+          return acc;
         }
         // console.log(`${currentKey}`);
         // console.log(`${nodeFromFirstFile[currentKey]}VALUE1`);
