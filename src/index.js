@@ -25,6 +25,8 @@ export const buildAst = (firstConfig, secondConfig) => {
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
+  console.log(supportedDataOfFirstFile);
+  console.log(supportedDataOfSecondFile);
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
@@ -71,15 +73,15 @@ export const buildAst = (firstConfig, secondConfig) => {
 const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   const ast = buildAst(firstConfig, secondConfig);
   if (format === 'stylish') {
-    console.log(`${stylish(ast)}STYLISH!`);
+    //console.log(`${stylish(ast)}STYLISH!`);
     return stylish(ast);
   }
   if (format === 'plain') {
-    console.log(`${plain}PLAIN!!!`);
+    //console.log(`${plain}PLAIN!!!`);
     return plain(ast);
   }
   if (format === 'json') {
-    console.log(`${json(ast)}json`);
+    //console.log(`${json(ast)}json`);
     return json(ast);
   }
   throw Error('Hello from gendiff!');
