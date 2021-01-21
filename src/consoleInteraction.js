@@ -1,5 +1,5 @@
 import program from 'commander';
-import { buildAst } from './index.js';
+import genDiff, { buildAst } from './index.js';
 import { stylish, plain, json } from './formatters/index.js';
 
 const interfaceWithTheConsole = () => {
@@ -9,17 +9,7 @@ const interfaceWithTheConsole = () => {
     .option('-f, --format [type]', 'Output format', 'stylish')
     .arguments('<filePath1> <filePath2>')
     .action((filePath1, filePath2, options) => {
-      if (options.format === 'plain') {
-        console.log(plain(buildAst(filePath1, filePath2)));
-      } else if (options.format === 'stylish') {
-        const result = stylish(buildAst(filePath1, filePath2));
-        console.log(`\n${result}\n`);
-      } else if (options.format === 'json') {
-        const result = json(buildAst(filePath1, filePath2));
-        console.log(`\n${result}\n`);
-      } else {
-        throw Error('dont have this formatter!');
-      }
+      console.log(genDiff(filePath1, filePath2, options.format));
     });
   program.parse(process.argv);
 };

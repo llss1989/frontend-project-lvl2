@@ -11,19 +11,6 @@ export const getData = (config) => {
   return [data, type];
 };
 
-const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
-  const ast = buildAst(firstConfig, secondConfig);
-  if (format === 'stylish') {
-    return stylish(ast);
-  }
-  if (format === 'plain') {
-    return plain(ast);
-  }
-  if (format === 'json') {
-    return json(ast);
-  }
-};
-
 const getTypeOfValue = (currentValue) => {
   if (typeof (currentValue) === 'object') {
     return 'object';
@@ -79,6 +66,20 @@ export const buildAst = (firstConfig, secondConfig) => {
     return ast;
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
+};
+
+const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
+  const ast = buildAst(firstConfig, secondConfig);
+  if (format === 'stylish') {
+    return stylish(ast);
+  }
+  if (format === 'plain') {
+    return plain(ast);
+  }
+  if (format === 'json') {
+    return json(ast);
+  }
+  throw Error('Hello from gendiff!');
 };
 
 export default genDiff;
