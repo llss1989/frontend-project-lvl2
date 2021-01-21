@@ -95,6 +95,7 @@ export const buildAst = (firstConfig, secondConfig) => {
 
 const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   const ast = buildAst(firstConfig, secondConfig);
+  console.log(JSON.stringify(ast, null, ' '));
   if (format === 'stylish') {
     //console.log(`${stylish(ast)}STYLISH!`);
     return stylish(ast);
