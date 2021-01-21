@@ -96,5 +96,5 @@ test('plain', () => {
   expect((plain(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')))) === plainExpected).toBe(true);
 });
 test('json', () => {
-  expect(testJSON(json(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'))))).toBe(true);
+  expect(testJSON(json(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'))))).toBe(!false);
 });
