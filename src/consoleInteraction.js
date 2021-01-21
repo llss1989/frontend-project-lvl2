@@ -1,6 +1,6 @@
 import program from 'commander';
 import { buildAst } from './index.js';
-import { stylish, plain } from './formatters/index.js';
+import { stylish, plain, json } from './formatters/index.js';
 
 const interfaceWithTheConsole = () => {
   program
