@@ -10,7 +10,7 @@ export const getData = (config) => {
   return [data, type];
 };
 
-export const genDiff = (firstConfig, secondConfig) => {
+const genDiff = (firstConfig, secondConfig) => {
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
@@ -102,3 +102,5 @@ export const buildAst = (firstConfig, secondConfig) => {
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
+
+export default genDiff;
