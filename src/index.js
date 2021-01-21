@@ -4,6 +4,18 @@ import _ from 'lodash';
 import getParseData from './parsers.js';
 import { stylish, plain, json } from './formatters/index.js';
 
+export const testJSON = (text) => {
+  if (typeof text !== 'string') {
+    return false;
+  }
+  try {
+    JSON.parse(text);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const getData = (config) => {
   const type = path.extname(config);
   const filepath = path.resolve(process.cwd(), config);
@@ -25,7 +37,7 @@ export const buildAst = (firstConfig, secondConfig) => {
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
-  if (typeof(supportedDataOfFirstFile) !== 'object' || typeof(supportedDataOfSecondFile) !== 'object') {
+  if (testJSON(supportedDataOfFirstFile) !== 'object' || testJSON(supportedDataOfSecondFile) !== 'object') {
     throw Error('Hello from BuildAST!');
   }
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
@@ -87,5 +99,7 @@ const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   }
   throw Error('Hello from gendiff!');
 };
+
+
 
 export default genDiff;
