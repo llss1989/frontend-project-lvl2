@@ -70,8 +70,8 @@ export const buildAst = (firstConfig, secondConfig) => {
 
 const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   const ast = buildAst(firstConfig, secondConfig);
+  console.log(ast);
   if (format === 'stylish') {
-    console.log(stylish(ast));
     return stylish(ast);
   }
   if (format === 'plain') {
