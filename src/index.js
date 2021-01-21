@@ -49,11 +49,14 @@ export const buildAst = (firstConfig, secondConfig) => {
       .reduce((acc, currentKey) => {
         const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
         const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
-        console.log(`${currentKey}`);
-        console.log(`${nodeFromFirstFile[currentKey]}VALUE1`);
-        console.log(`${nodeFromSecondFile[currentKey]}VALUE2`);
-        console.log(typeof(nodeFromFirstFile[currentKey]));
-        console.log(typeof(nodeFromSecondFile[currentKey]));
+        if (currentKey === 'prepareStackTrace' || currentKey === 'stackTraceLimit') {
+          continue;
+        }
+        // console.log(`${currentKey}`);
+        // console.log(`${nodeFromFirstFile[currentKey]}VALUE1`);
+        // console.log(`${nodeFromSecondFile[currentKey]}VALUE2`);
+        // console.log(typeof(nodeFromFirstFile[currentKey]));
+        // console.log(typeof(nodeFromSecondFile[currentKey]));
         acc.push({
           nameOfKey: currentKey,
           depth: nestling,
