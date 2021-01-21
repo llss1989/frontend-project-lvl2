@@ -14,6 +14,9 @@ const interfaceWithTheConsole = () => {
       } else if (options.format === 'stylish') {
         const result = stylish(buildAst(filePath1, filePath2));
         console.log(`\n${result}\n`);
+      } else if (options.format === 'json') {
+        const result = json(buildAst(filePath1, filePath2));
+        console.log(`\n${result}\n`);
       } else {
         throw Error('dont have this formatter!');
       }
