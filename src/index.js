@@ -71,15 +71,15 @@ export const buildAst = (firstConfig, secondConfig) => {
 const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   const ast = buildAst(firstConfig, secondConfig);
   if (format === 'stylish') {
-    console.log(stylish(ast));
+    console.log(`${stylish(ast)}STYLISH!`);
     return stylish(ast);
   }
   if (format === 'plain') {
-    console.log(plain(ast));
+    console.log(`${plain}PLAIN!!!`);
     return plain(ast);
   }
   if (format === 'json') {
-    console.log(json(ast));
+    console.log(`${json(ast)}json`);
     return json(ast);
   }
   throw Error('Hello from gendiff!');
