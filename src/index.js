@@ -47,7 +47,7 @@ export const buildAst = (firstConfig, secondConfig) => {
       .sort()
       .reduce((acc, currentKey) => {
         const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
-        const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey])npx;
+        const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
         acc.push({
           nameOfKey: currentKey,
           depth: nestling,
