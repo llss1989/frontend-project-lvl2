@@ -36,7 +36,7 @@ export const stylish = (ast) => {
       }
       return acc.flat(1);
     }, []);
-    console.log(lines)
+    //console.log(lines)
     return lines;
   };
   const result = iter(ast);
