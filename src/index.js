@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import getParseData from './parsers.js';
+import { stylish, plain, json } from './formatters/index.js';
 
 export const getData = (config) => {
   const type = path.extname(config);
@@ -10,40 +11,17 @@ export const getData = (config) => {
   return [data, type];
 };
 
-const genDiff = (firstConfig, secondConfig) => {
-  const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
-  const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
-  const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
-  const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
-  const keysOfDataOfFirstFile = Object.keys(supportedDataOfFirstFile);
-  const keyOfDataOfSecondFile = Object.keys(supportedDataOfSecondFile);
-  const compareResult = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
-    .sort()
-    .reduce((acc, currentKey, index, array) => {
-      const indexOfLastElement = array.length - 1;
-      if (Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
-      && !Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
-        acc.push(`  - ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
-      }
-      if (!Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
-      && Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
-        acc.push(`  + ${currentKey}: ${supportedDataOfSecondFile[currentKey]}`);
-      }
-      if (Object.prototype.hasOwnProperty.call(supportedDataOfFirstFile, currentKey)
-      && Object.prototype.hasOwnProperty.call(supportedDataOfSecondFile, currentKey)) {
-        if (supportedDataOfFirstFile[currentKey] === supportedDataOfSecondFile[currentKey]) {
-          acc.push(`    ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
-        } else if (dataOfFirstFile[currentKey] !== supportedDataOfSecondFile[currentKey]) {
-          acc.push(`  - ${currentKey}: ${supportedDataOfFirstFile[currentKey]}`);
-          acc.push(`  + ${currentKey}: ${supportedDataOfSecondFile[currentKey]}`);
-        }
-      }
-      if (index === indexOfLastElement) {
-        acc.push('}');
-      }
-      return acc;
-    }, ['{']);
-  return compareResult.join('\n');
+const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
+  const ast = buildAst(firstConfig, secondConfig);
+  if (format === 'stylish') {
+    return stylish(ast);
+  }
+  if (format === 'plain') {
+    return plain(ast);
+  }
+  if (format === 'json') {
+    return json(ast);
+  }
 };
 
 const getTypeOfValue = (currentValue) => {
