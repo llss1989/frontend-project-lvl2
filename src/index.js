@@ -38,7 +38,7 @@ export const buildAst = (firstConfig, secondConfig) => {
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
   if (typeof (supportedDataOfFirstFile) !== 'object') {
-    throw Error('Hello from BuildAST!');
+    continue;
   }
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
@@ -47,7 +47,7 @@ export const buildAst = (firstConfig, secondConfig) => {
       .sort()
       .reduce((acc, currentKey) => {
         const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
-        const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
+        const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey])npx;
         acc.push({
           nameOfKey: currentKey,
           depth: nestling,
