@@ -34,9 +34,9 @@ export const stylish = (ast) => {
         acc.push(iter(node.childrens));
         acc.push(`${currentIndent}}`);
       }
-      console.log(acc)
       return acc.flat(1);
     }, []);
+    console.log(lines)
     return lines;
   };
   const result = iter(ast);
