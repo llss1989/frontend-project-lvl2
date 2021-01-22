@@ -1,18 +1,6 @@
 import path from 'path';
-import { buildAst } from '../src/index.js';
-import { plain, stylish, json } from '../src/formatters/index.js';
+import genDiff, { buildAst, testJSON } from '../src/index.js';
 
-const testJSON = (text) => {
-  if (typeof text !== 'string') {
-    return false;
-  }
-  try {
-    JSON.parse(text);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
 const recursiveExpected = `
 {
     common: {
@@ -83,18 +71,18 @@ Property 'group3' was added with value: [complex value]`;
 const getPathOfFile = (nameOfFile) => path.resolve(process.cwd(), '__fixtures__', nameOfFile);
 
 test('basic', () => {
-  expect(stylish(buildAst(getPathOfFile('package.json'), getPathOfFile('package2.json'))) === expected).toBe(true);
+  expect(genDiff(getPathOfFile('package.json'), getPathOfFile('package2.json')) === expected).toBe(true);
 });
 test('basic-yaml', () => {
-  expect(stylish(buildAst(getPathOfFile('package.yaml'), getPathOfFile('package2.yaml'))) === expected).toBe(true);
+  expect(genDiff(getPathOfFile('package.yaml'), getPathOfFile('package2.yaml')) === expected).toBe(true);
 });
 
 test('basic-recursive', () => {
-  expect((stylish(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')))) === recursiveExpected).toBe(true);
+  expect(genDiff(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')) === recursiveExpected).toBe(true);
 });
 test('plain', () => {
-  expect((plain(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')))) === plainExpected).toBe(true);
+  expect(genDiff(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'), 'plain') === plainExpected).toBe(true);
 });
 test('json', () => {
-  expect(testJSON(json(buildAst(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'))))).toBe(!false);
+  expect(testJSON(genDiff(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'), 'json'))).toBe(true);
 });
