@@ -21,7 +21,7 @@ export const getData = (config) => {
   const __dirname = dirname(__filename);
   const pathOfUser = config.split('/');
   const type = path.extname(config);
-  const filepath = path.join(process.cwd(), ...pathOfUser);
+  const filepath = path.join(__dirname, '../', '../', ...pathOfUser);
   const data = fs.readFileSync(filepath, 'utf8');
   return [data, type];
 };
@@ -102,4 +102,5 @@ const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   throw Error('Hello from gendiff!');
 };
 
+console.log(genDiff('/frontend-project-lvl2/__fixtures__/packageRecursive.json', '/frontend-project-lvl2/__fixtures__/packageRecursive2.json'));
 export default genDiff;
