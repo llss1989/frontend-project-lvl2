@@ -37,10 +37,6 @@ export const buildAst = (firstConfig, secondConfig) => {
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = getParseData(dataOfSecondFile, typeOfSecondFile);
-  // if (typeof (supportedDataOfFirstFile) !== 'object') {
-  //   console.log(`${typeof(supportedDataOfFirstFile)}`);
-  //   throw Error('Hello from BuildAST!');
-  // }
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
@@ -52,11 +48,6 @@ export const buildAst = (firstConfig, secondConfig) => {
         if (currentKey === 'prepareStackTrace' || currentKey === 'stackTraceLimit') {
           return acc;
         }
-        // console.log(`${currentKey}`);
-        // console.log(`${nodeFromFirstFile[currentKey]}VALUE1`);
-        // console.log(`${nodeFromSecondFile[currentKey]}VALUE2`);
-        // console.log(typeof(nodeFromFirstFile[currentKey]));
-        // console.log(typeof(nodeFromSecondFile[currentKey]));
         acc.push({
           nameOfKey: currentKey,
           depth: nestling,
@@ -87,7 +78,6 @@ export const buildAst = (firstConfig, secondConfig) => {
         }
         return acc;
       }, []);
-    //console.log(ast.map((x)=>console.log(x)))
     return ast;
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
@@ -95,17 +85,13 @@ export const buildAst = (firstConfig, secondConfig) => {
 
 const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   const ast = buildAst(firstConfig, secondConfig);
-  //console.log(JSON.stringify(ast, null, ' '));
   if (format === 'stylish') {
-    //console.log(`${stylish(ast)}STYLISH!`);
     return stylish(ast);
   }
   if (format === 'plain') {
-    //console.log(`${plain}PLAIN!!!`);
     return plain(ast);
   }
   if (format === 'json') {
-    //console.log(`${json(ast)}json`);
     return json(ast);
   }
   throw Error('Hello from gendiff!');
