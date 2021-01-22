@@ -43,6 +43,9 @@ export const buildAst = (firstConfig, secondConfig) => {
     const ast = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
       .sort()
       .reduce((acc, currentKey) => {
+        console.log(`${currentKey}`);
+        console.log(`${nodeFromFirstFile[currentKey]}FIRST`);
+        console.log(`${nodeFromSecondFile[currentKey]}SECOND`);
         const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
         const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
         if (currentKey === 'prepareStackTrace' || currentKey === 'stackTraceLimit') {
