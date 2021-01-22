@@ -41,7 +41,7 @@ export const stylish = (ast) => {
   };
   const result = iter(ast);
   return [
-    '\n{',
+    '{',
     ...result,
     '}',
   ].join('\n');
