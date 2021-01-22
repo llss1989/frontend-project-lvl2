@@ -99,5 +99,4 @@ const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   throw Error('Hello from gendiff!');
 };
 
-console.log(genDiff('../__fixtures__/packageRecursive.yaml', '../__fixtures__/packageRecursive2.json'));
 export default genDiff;
