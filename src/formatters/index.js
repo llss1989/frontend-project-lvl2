@@ -28,7 +28,7 @@ export const stylish = (ast) => {
           acc.push(`${currentIndent}  ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
         }
         if (node.status === 'updated') {
-          acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value[0], node.depth + 1)}`);
+          acc.push(`${currentIndent}- ${node.nameOfKey}:${getValue(node.value[0], node.depth + 1)}`);
           acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value[1], node.depth + 1)}`);
         }
       }
