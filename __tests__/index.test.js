@@ -1,8 +1,7 @@
 import path from 'path';
 import genDiff, { buildAst, testJSON } from '../src/index.js';
 
-const recursiveExpected = `
-{
+const recursiveExpected = `{
     common: {
       + follow: false
         setting1: Value 1
@@ -47,8 +46,7 @@ const recursiveExpected = `
     }
 }`;
 
-const expected = `
-{
+const expected = `{
   - follow: false
     host: hexlet.io
   - proxy: 123.234.53.22
