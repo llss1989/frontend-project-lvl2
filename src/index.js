@@ -3,6 +3,8 @@ import path from 'path';
 import _ from 'lodash';
 import getParseData from './parsers.js';
 import { stylish, plain, json } from './formatters/index.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 export const testJSON = (text) => {
   if (typeof text !== 'string') {
@@ -17,8 +19,11 @@ export const testJSON = (text) => {
 };
 
 export const getData = (config) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  const filename = config.split(/(\\|\/)/g).pop();
   const type = path.extname(config);
-  const filepath = path.resolve(process.cwd(), config);
+  const filepath = path.join(__dirname, '..', '__fixtures__', filename);
   const data = fs.readFileSync(filepath, 'utf8');
   return [data, type];
 };
@@ -33,8 +38,8 @@ const getTypeOfValue = (currentValue) => {
   return 'primitive';
 };
 export const buildAst = (firstConfig, secondConfig) => {
-  console.log(`${firstConfig}first config`);
-  console.log(`${secondConfig}second config`);
+  // console.log(`${firstConfig}first config`);
+  // console.log(`${secondConfig}second config`);
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
