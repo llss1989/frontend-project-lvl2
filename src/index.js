@@ -87,7 +87,7 @@ export const buildAst = (firstConfig, secondConfig) => {
         }
         return acc;
       }, []);
-    console.log(ast.map((x)=>console.log(x)))
+    //console.log(ast.map((x)=>console.log(x)))
     return ast;
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
