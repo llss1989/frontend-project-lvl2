@@ -69,17 +69,17 @@ Property 'group3' was added with value: [complex value]`;
 const getPathOfFile = (nameOfFile) => path.resolve(process.cwd(), '__fixtures__', nameOfFile);
 
 test('basic', () => {
-  expect(genDiff(getPathOfFile('package.json'), getPathOfFile('package2.json')) === expected).toBe(true);
+  expect(genDiff(getPathOfFile('package.json'), getPathOfFile('package2.json'))).toEqual(expected);
 });
 test('basic-yaml', () => {
-  expect(genDiff(getPathOfFile('package.yaml'), getPathOfFile('package2.yaml')) === expected).toBe(true);
+  expect(genDiff(getPathOfFile('package.yaml'), getPathOfFile('package2.yaml'))).toEqual(expected);
 });
 
 test('basic-recursive', () => {
-  expect(genDiff(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json')) === recursiveExpected).toBe(true);
+  expect(genDiff(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'))).toEqual(recursiveExpected);
 });
 test('plain', () => {
-  expect(genDiff(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'), 'plain') === plainExpected).toBe(true);
+  expect(genDiff(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'), 'plain')).toEqual(plainExpected);
 });
 test('json', () => {
   expect(testJSON(genDiff(getPathOfFile('packageRecursive.json'), getPathOfFile('packageRecursive2.json'), 'json'))).toBe(true);
