@@ -1,10 +1,9 @@
 import fs from 'fs';
-import path from 'path';
+import path, { dirname } from 'path';
 import _ from 'lodash';
+import { fileURLToPath } from 'url';
 import getParseData from './parsers.js';
 import { stylish, plain, json } from './formatters/index.js';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 export const testJSON = (text) => {
   if (typeof text !== 'string') {
@@ -17,13 +16,12 @@ export const testJSON = (text) => {
     return false;
   }
 };
-
 export const getData = (config) => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  const filename = config.split(/(\\|\/)/g).pop();
+  const pathOfUser = config.split('/');
   const type = path.extname(config);
-  const filepath = path.join(__dirname, '..', '__fixtures__', filename);
+  const filepath = path.join(process.cwd(), ...pathOfUser);
   const data = fs.readFileSync(filepath, 'utf8');
   return [data, type];
 };
