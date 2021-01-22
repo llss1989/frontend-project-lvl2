@@ -33,6 +33,8 @@ const getTypeOfValue = (currentValue) => {
   return 'primitive';
 };
 export const buildAst = (firstConfig, secondConfig) => {
+  console.log(`${firstConfig}first config`);
+  console.log(`${secondConfig}second config`);
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
@@ -43,9 +45,6 @@ export const buildAst = (firstConfig, secondConfig) => {
     const ast = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
       .sort()
       .reduce((acc, currentKey) => {
-        // console.log(`${currentKey}`);
-        // console.log(`${nodeFromFirstFile[currentKey] === ''}FIRST`);
-        // console.log(`${nodeFromSecondFile[currentKey] === ''}SECOND`);
         const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
         const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
         if (currentKey === 'prepareStackTrace' || currentKey === 'stackTraceLimit') {
@@ -100,4 +99,5 @@ const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   throw Error('Hello from gendiff!');
 };
 
+console.log(genDiff('../__fixtures__/packageRecursive.yaml', '../__fixtures__/packageRecursive2.json'));
 export default genDiff;
