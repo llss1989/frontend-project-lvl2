@@ -2,7 +2,8 @@ const getValue = (valueKey, depth) => {
   const currentIndent = '  '.repeat(depth * 2);
   const closeBracketIndent = '  '.repeat(depth * 2 - 2);
   if (typeof (valueKey) !== 'object' || valueKey === null) {
-    return `${valueKey}`;
+    const returnedValue = valueKey === '' ? '' : valueKey;
+    return returnedValue;
   }
   const lines = Object.entries(valueKey).map(([key, currentValue]) => `${currentIndent}${key}: ${getValue(currentValue, depth + 1)}`);
   return ['{',
