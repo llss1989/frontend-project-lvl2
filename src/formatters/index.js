@@ -3,7 +3,7 @@ const getValue = (valueKey, depth) => {
   const closeBracketIndent = '  '.repeat(depth * 2 - 2);
   if (typeof (valueKey) !== 'object' || valueKey === null) {
     if (valueKey === '') {
-      return "AAA";
+      return ` \'AAA'\ `;
     }
     return valueKey;
   }
