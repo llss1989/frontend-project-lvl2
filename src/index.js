@@ -21,7 +21,7 @@ export const getData = (config) => {
   const __dirname = dirname(__filename);
   const pathOfUser = config.split('/');
   const type = path.extname(config);
-  const filepath = path.join(__dirname, '../', '../', ...pathOfUser);
+  const filepath = path.join(__dirname, '../', ...pathOfUser);
   const data = fs.readFileSync(filepath, 'utf8');
   return [data, type];
 };
