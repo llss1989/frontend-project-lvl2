@@ -102,5 +102,5 @@ const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   throw Error('Hello from gendiff!');
 };
 
-console.log(genDiff('/frontend-project-lvl2/__fixtures__/packageRecursive.json', '/frontend-project-lvl2/__fixtures__/packageRecursive2.json'));
+//console.log(genDiff('/frontend-project-lvl2/__fixtures__/packageRecursive.json', '/frontend-project-lvl2/__fixtures__/packageRecursive2.json'));
 export default genDiff;
