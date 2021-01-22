@@ -7,7 +7,7 @@ const getValue = (valueKey, depth) => {
     }
     return valueKey;
   }
-  const lines = Object.entries(valueKey).map(([key, currentValue]) => `${currentIndent}${key}: ${getValue(currentValue, depth + 1)}`);
+  const lines = Object.entries(valueKey).map(([key, currentValue]) => `${currentIndent}${key}: '${getValue(currentValue, depth + 1)}'`);
   return ['{',
     ...lines,
     `${closeBracketIndent}}`].join('\n');
