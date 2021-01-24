@@ -1,5 +1,5 @@
 import fs from 'fs';
-import path, { dirname } from 'path';
+import path, { dirname, isAbsolute } from 'path';
 import _ from 'lodash';
 import { fileURLToPath } from 'url';
 import getParseData from './parsers.js';
@@ -16,12 +16,18 @@ export const testJSON = (text) => {
     return false;
   }
 };
+
 export const getData = (config) => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   const pathOfUser = config.split('/');
   const type = path.extname(config);
-  const filepath = path.join(__dirname, ...pathOfUser);
+  if (path.isAbsolute(config) && pathOfUser[0] !== 'home') {
+    const filepathToRootOfProject = path.join(__dirname, '..', '..', ...pathOfUser);
+    const data = fs.readFileSync(filepathToRootOfProject, 'utf8');
+    return [data, type];
+  }
+  const filepath = path.resolve(process.cwd(), config);
   const data = fs.readFileSync(filepath, 'utf8');
   return [data, type];
 };
@@ -36,8 +42,6 @@ const getTypeOfValue = (currentValue) => {
   return 'primitive';
 };
 export const buildAst = (firstConfig, secondConfig) => {
-  // console.log(`${firstConfig}first config`);
-  // console.log(`${secondConfig}second config`);
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
   const supportedDataOfFirstFile = getParseData(dataOfFirstFile, typeOfFirstFile);
@@ -101,6 +105,4 @@ const genDiff = (firstConfig, secondConfig, format = 'stylish') => {
   }
   throw Error('Hello from gendiff!');
 };
-
-//console.log(genDiff('/frontend-project-lvl2/__fixtures__/packageRecursive.json', '/frontend-project-lvl2/__fixtures__/packageRecursive2.json'));
 export default genDiff;

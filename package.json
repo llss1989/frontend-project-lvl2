@@ -13,8 +13,9 @@
   },
   "dependencies": {
     "commander": "^6.2.0",
+    "js-yaml": "^3.14.0",
     "lodash": "^4.17.20",
-    "js-yaml": "^3.14.0"
+    "pkg-dir": "^5.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
