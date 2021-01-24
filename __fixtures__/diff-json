@@ -1,0 +1,152 @@
+[
+ {
+  "nameOfKey": "common",
+  "depth": 1,
+  "childrens": [
+   {
+    "nameOfKey": "follow",
+    "depth": 2,
+    "childrens": [],
+    "status": "deleted",
+    "value": false
+   },
+   {
+    "nameOfKey": "setting1",
+    "depth": 2,
+    "childrens": [],
+    "status": "no_changed",
+    "value": "Value 1"
+   },
+   {
+    "nameOfKey": "setting2",
+    "depth": 2,
+    "childrens": [],
+    "status": "added",
+    "value": 200
+   },
+   {
+    "nameOfKey": "setting3",
+    "depth": 2,
+    "childrens": [],
+    "status": "updated",
+    "value": [
+     null,
+     true
+    ]
+   },
+   {
+    "nameOfKey": "setting4",
+    "depth": 2,
+    "childrens": [],
+    "status": "deleted",
+    "value": "blah blah"
+   },
+   {
+    "nameOfKey": "setting5",
+    "depth": 2,
+    "childrens": [],
+    "status": "deleted",
+    "value": {
+     "key5": "value5"
+    }
+   },
+   {
+    "nameOfKey": "setting6",
+    "depth": 2,
+    "childrens": [
+     {
+      "nameOfKey": "doge",
+      "depth": 3,
+      "childrens": [
+       {
+        "nameOfKey": "wow",
+        "depth": 4,
+        "childrens": [],
+        "status": "updated",
+        "value": [
+         "so much",
+         ""
+        ]
+       }
+      ]
+     },
+     {
+      "nameOfKey": "key",
+      "depth": 3,
+      "childrens": [],
+      "status": "no_changed",
+      "value": "value"
+     },
+     {
+      "nameOfKey": "ops",
+      "depth": 3,
+      "childrens": [],
+      "status": "deleted",
+      "value": "vops"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "nameOfKey": "group1",
+  "depth": 1,
+  "childrens": [
+   {
+    "nameOfKey": "baz",
+    "depth": 2,
+    "childrens": [],
+    "status": "updated",
+    "value": [
+     "bars",
+     "bas"
+    ]
+   },
+   {
+    "nameOfKey": "foo",
+    "depth": 2,
+    "childrens": [],
+    "status": "no_changed",
+    "value": "bar"
+   },
+   {
+    "nameOfKey": "nest",
+    "depth": 2,
+    "childrens": [],
+    "status": "updated",
+    "value": [
+     "str",
+     {
+      "key": "value"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "nameOfKey": "group2",
+  "depth": 1,
+  "childrens": [],
+  "status": "added",
+  "value": {
+   "abc": 12345,
+   "deep": {
+    "id": 45
+   }
+  }
+ },
+ {
+  "nameOfKey": "group3",
+  "depth": 1,
+  "childrens": [],
+  "status": "deleted",
+  "value": {
+   "fee": 100500,
+   "deep": {
+    "id": {
+     "number": 45
+    }
+   }
+  }
+ }
+]

@@ -4,7 +4,7 @@ const getParseData = (data, type) => {
   if (type === '.json') {
     return JSON.parse(data);
   }
-  if (type === '.yaml') {
+  if (type === '.yml') {
     return yaml.safeLoad(data);
   }
   return Error;
