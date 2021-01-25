@@ -22,15 +22,6 @@ export const getData = (config) => {
   const __dirname = dirname(__filename);
   const pathOfUser = config.split('/');
   const type = path.extname(config);
-  if (path.isAbsolute(config) && pathOfUser[1] === 'home') {
-    const data = fs.readFileSync(config, 'utf8');
-    return [data, type];
-  }
-  if (path.isAbsolute(config) && pathOfUser[1] !== 'home') {
-    const filepathToRootOfProject = path.join(process.cwd(), '..', '..', ...pathOfUser);
-    const data = fs.readFileSync(filepathToRootOfProject, 'utf8');
-    return [data, type];
-  }
   const filepath = path.resolve(process.cwd(), config);
   const data = fs.readFileSync(filepath, 'utf8');
   return [data, type];
