@@ -18,9 +18,6 @@ export const testJSON = (text) => {
 };
 
 export const getData = (config) => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
-  const pathOfUser = config.split('/');
   const type = path.extname(config);
   const filepath = path.resolve(process.cwd(), config);
   const data = fs.readFileSync(filepath, 'utf8');

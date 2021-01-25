@@ -1,5 +1,5 @@
 import path from 'path';
-import genDiff, { buildAst, testJSON } from '../src/index.js';
+import genDiff, { testJSON } from '../src/index.js';
 
 const recursiveExpected = `{
     common: {

@@ -1,6 +1,4 @@
 import program from 'commander';
-import genDiff, { buildAst } from './index.js';
-import { stylish, plain, json } from './formatters/index.js';
 
 const interfaceWithTheConsole = () => {
   program
