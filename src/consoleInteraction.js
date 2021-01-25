@@ -1,4 +1,5 @@
 import program from 'commander';
+import genDiff from './index.js';
 
 const interfaceWithTheConsole = () => {
   program
