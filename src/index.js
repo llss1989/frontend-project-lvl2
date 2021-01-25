@@ -1,7 +1,6 @@
 import fs from 'fs';
-import path, { dirname, isAbsolute } from 'path';
+import path from 'path';
 import _ from 'lodash';
-import { fileURLToPath } from 'url';
 import getParseData from './parsers.js';
 import { stylish, plain, json } from './formatters/index.js';
 

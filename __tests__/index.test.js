@@ -72,7 +72,7 @@ test('basic', () => {
   expect(genDiff(getPathOfFile('package.json'), getPathOfFile('package2.json'))).toEqual(expected);
 });
 test('basic-yaml', () => {
-  expect(genDiff(getPathOfFile('package.yaml'), getPathOfFile('package2.yaml'))).toEqual(expected);
+  expect(genDiff(getPathOfFile('package.yml'), getPathOfFile('package2.yml'))).toEqual(expected);
 });
 
 test('basic-recursive', () => {
