@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "type": "module",
   "bin": {
-    "gendiff": "./src/bin/gendiff.js"
+    "gendiff": "./bin/gendiff.js"
   },
   "jest": {
     "testEnvironment": "node",
