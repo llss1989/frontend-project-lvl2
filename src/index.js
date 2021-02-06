@@ -4,18 +4,6 @@ import _ from 'lodash';
 import getParseData from './parsers.js';
 import { stylish, plain, json } from './formatters/index.js';
 
-export const testJSON = (text) => {
-  if (typeof text !== 'string') {
-    return false;
-  }
-  try {
-    JSON.parse(text);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
-
 export const getData = (config) => {
   const type = path.extname(config).slice(1);
   const filepath = path.resolve(process.cwd(), config);
