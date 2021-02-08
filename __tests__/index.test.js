@@ -9,7 +9,7 @@ test('basic', () => {
   expect(genDiff(getPathOfFile('before.json'), getPathOfFile('after.json'))).toEqual(getResult(getPathOfFile('stylishExpected')));
 });
 test('plain', () => {
-  expect(genDiff(getPathOfFile('before.json'), getPathOfFile('after.json'), 'plain')).toEqual(getResult(getPathOfFile('plainExpected')));
+  expect(genDiff(getPathOfFile('before.yaml'), getPathOfFile('after.json'), 'plain')).toEqual(getResult(getPathOfFile('plainExpected')));
 });
 test('json', () => {
   expect(() => JSON.parse(genDiff(getPathOfFile('before.json'), getPathOfFile('after.json'), 'json'))).not.toThrow();
