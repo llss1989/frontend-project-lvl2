@@ -16,5 +16,5 @@ test('json', () => {
 });
 
 test('stylish', () => {
-  expect(genDiff(getPathOfFile('before.yml'), getPathOfFile('after.yml'))).toEqual(getResult(getPathOfFile('stylishExpected')));
+  expect(genDiff(getPathOfFile('before.yml'), getPathOfFile('after.yml'), 'stylish')).toEqual(getResult(getPathOfFile('stylishExpected')));
 });
