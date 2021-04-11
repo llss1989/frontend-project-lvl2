@@ -20,6 +20,42 @@ const getTypeOfValue = (currentValue) => {
   return 'primitive';
 };
 
+const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling, iter, currentKey) => {
+  const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
+  const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
+  if (typeOfKeyValueFromFirstFile === 'OTC' && (typeOfKeyValueFromSecondFile === 'primitive' || 'object')) {
+    return {
+      nameOfKey: currentKey, depth: nestling, childrens: [], status: 'added', value: nodeFromSecondFile[currentKey],
+    };
+  }
+  if (typeOfKeyValueFromFirstFile === 'primitive' && (typeOfKeyValueFromSecondFile === 'OTC')) {
+    return {
+      nameOfKey: currentKey, depth: nestling, childrens: [], status: 'deleted', value: nodeFromFirstFile[currentKey],
+    };
+  }
+  if (typeOfKeyValueFromFirstFile === 'primitive' && (typeOfKeyValueFromSecondFile === 'primitive')) {
+    return {
+      nameOfKey: currentKey, depth: nestling, childrens: [], status: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated', value: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? nodeFromFirstFile[currentKey] : [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
+    };
+  }
+  if ((typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'primitive')
+  || (typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'object')) {
+    return {
+      nameOfKey: currentKey, depth: nestling, childrens: [], status: 'updated', value: [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
+    };
+  }
+  if (typeOfKeyValueFromFirstFile === 'object'
+  && typeOfKeyValueFromSecondFile === 'object') {
+    return {
+      nameOfKey: currentKey, depth: nestling, childrens: iter(nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey], nestling + 1),
+    };
+  }
+};
+const partial = (fn, firstArg, secondArg, thirdArg, iter) => (fourArg) => fn(firstArg, secondArg, thirdArg, iter, fourArg);
+
+// const partialSayHi = partial(sayHi, 'privet', 'debil', 'yebannyi');
+// console.log(partialSayHi('lola'));
+
 const buildAst = (firstConfig, secondConfig) => {
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
@@ -28,42 +64,15 @@ const buildAst = (firstConfig, secondConfig) => {
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
+    // console.log(`${typeof(keyOfDataOfSecondFile)}111111`)
+    // console.log(keysOfDataOfFirstFile);
+    // console.log(keyOfDataOfSecondFile);
+    const partialParseNode = partial(parseSubNode, nodeFromFirstFile, nodeFromSecondFile, nestling, iter);
     const ast = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
       .sort()
-      .reduce((acc, currentKey) => {
-        const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
-        const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
-        acc.push({
-          nameOfKey: currentKey,
-          depth: nestling,
-          childrens: [],
-        });
-        if (typeOfKeyValueFromFirstFile === 'OTC' && (typeOfKeyValueFromSecondFile === 'primitive' || 'object')) {
-          acc[acc.length - 1].status = 'added';
-          acc[acc.length - 1].value = nodeFromSecondFile[currentKey];
-        }
-        if ((typeOfKeyValueFromFirstFile === 'primitive' || 'object') && typeOfKeyValueFromSecondFile === 'OTC') {
-          acc[acc.length - 1].status = 'deleted';
-          acc[acc.length - 1].value = nodeFromFirstFile[currentKey];
-        }
-        if ((typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'primitive')) {
-          acc[acc.length - 1].status = nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated';
-          acc[acc.length - 1].value = acc[acc.length - 1].status === 'updated' ? [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]] : nodeFromSecondFile[currentKey];
-        }
-        if ((typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'primitive')
-        || (typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'object')) {
-          acc[acc.length - 1].status = 'updated';
-          acc[acc.length - 1].value = [nodeFromFirstFile[currentKey],
-            nodeFromSecondFile[currentKey]];
-        }
-        if (typeOfKeyValueFromFirstFile === 'object'
-        && typeOfKeyValueFromSecondFile === 'object') {
-          acc[acc.length - 1].childrens = iter(nodeFromFirstFile[currentKey],
-            nodeFromSecondFile[currentKey], nestling + 1);
-        }
-        return acc;
-      }, []);
-    return ast;
+      .map(partialParseNode);
+    // console.log(ast);
+    return ast.filter((x) => x !== undefined);
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
 };
