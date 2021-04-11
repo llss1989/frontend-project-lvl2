@@ -53,9 +53,6 @@ const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling, iter, cur
 };
 const partial = (fn, firstArg, secondArg, thirdArg, iter) => (fourArg) => fn(firstArg, secondArg, thirdArg, iter, fourArg);
 
-// const partialSayHi = partial(sayHi, 'privet', 'debil', 'yebannyi');
-// console.log(partialSayHi('lola'));
-
 const buildAst = (firstConfig, secondConfig) => {
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
   const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
@@ -64,9 +61,6 @@ const buildAst = (firstConfig, secondConfig) => {
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
-    // console.log(`${typeof(keyOfDataOfSecondFile)}111111`)
-    // console.log(keysOfDataOfFirstFile);
-    // console.log(keyOfDataOfSecondFile);
     const partialParseNode = partial(parseSubNode, nodeFromFirstFile, nodeFromSecondFile, nestling, iter);
     const ast = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile)
       .sort()
