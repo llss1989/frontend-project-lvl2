@@ -6,28 +6,27 @@ const getValueForPlain = (value) => {
   }
   return value;
 };
-
+const parseCurrentNode = (currentNode, keyPath, iter) => {
+  const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}` : `${currentNode.nameOfKey}`;
+  if (currentNode.childrens.length === 0) {
+    if (currentNode.status === 'added') {
+      return `Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`;
+    }
+    if (currentNode.status === 'deleted') {
+      return `Property '${newKeyPath}' was removed`;
+    }
+    if (currentNode.status === 'updated') {
+      return `Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`;
+    }
+  }
+  if (currentNode.childrens.length > 0) {
+    return iter(currentNode.childrens, `${newKeyPath}`);
+  }
+};
 const plain = (ast) => {
   const iter = (tree, keyPath) => {
-    const lines = tree.reduce((acc, currentNode) => {
-      const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}` : `${currentNode.nameOfKey}`;
-      if (currentNode.childrens.length === 0 && currentNode.status !== 'no_changed') {
-        if (currentNode.status === 'added') {
-          acc.push(`Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`);
-        }
-        if (currentNode.status === 'deleted') {
-          acc.push(`Property '${newKeyPath}' was removed`);
-        }
-        if (currentNode.status === 'updated') {
-          acc.push(`Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`);
-        }
-      }
-      if (currentNode.childrens.length > 0) {
-        acc.push(`${iter(currentNode.childrens, `${newKeyPath}`)}`);
-      }
-      return acc;
-    }, []);
-    return lines.join('\n');
+    const lines = tree.map((currentNode) => parseCurrentNode(currentNode, keyPath, iter));
+    return lines.filter((x) => typeof x === 'string').join('\n');
   };
   return iter(ast, '');
 };
