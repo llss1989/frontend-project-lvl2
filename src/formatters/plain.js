@@ -11,15 +11,14 @@ const parseCurrentNode = (currentNode, keyPath, iter) => {
   if (currentNode.childrens.length > 0) {
     return iter(currentNode.childrens, `${newKeyPath}`);
   }
-  if (currentNode.childrens.length === 0 && currentNode.status !== 'no_changed'){
-    return parseCurrentNode.states[currentNode['status']](newKeyPath, currentNode);
-  }
+  return parseCurrentNode.states[currentNode.status](newKeyPath, currentNode);
 };
 parseCurrentNode.states = {
   added: (newKeyPath, currentNode) => `Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`,
-  deleted: (newKeyPath, currentNode) => `Property '${newKeyPath}' was removed`,
+  deleted: (newKeyPath) => `Property '${newKeyPath}' was removed`,
   updated: (newKeyPath, currentNode) => `Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
-}
+  no_changed: () => null,
+};
 
 const plain = (ast) => {
   const iter = (tree, keyPath) => {
