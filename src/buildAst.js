@@ -52,6 +52,7 @@ const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling, iter, cur
         nodeFromSecondFile[currentKey], nestling + 1),
     };
   }
+  throw Error('error from buildAst!');
 };
 const partial = (fn, arg1, arg2, arg3, iter) => (fourArg) => fn(arg1, arg2, arg3, iter, fourArg);
 
@@ -66,8 +67,8 @@ const buildAst = (firstConfig, secondConfig) => {
     const partialParseNode = partial(parseSubNode, nodeFromFirstFile,
       nodeFromSecondFile, nestling, iter);
     const ast = _.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile);
-    const sortedAst = [...ast].sort().
-      map(partialParseNode);
+    const sortedAst = [...ast].sort()
+      .map(partialParseNode);
     return sortedAst.filter((x) => x !== undefined);
   };
   return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
