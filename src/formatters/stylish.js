@@ -36,7 +36,7 @@ const stylish = (ast) => {
     return lines;
   };
   const result = iter(ast).filter((x) => typeof(x) !== '');
-  console.log(`${result}!!!!!!!!!!!!1`)
+  // console.log(`${result}!!!!!!!!!!!!1`)
   return [
     '{',
     ...result,
