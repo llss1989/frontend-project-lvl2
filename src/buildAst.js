@@ -46,11 +46,14 @@ const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling, iter, cur
   if (typeOfKeyValueFromFirstFile === 'object'
   && typeOfKeyValueFromSecondFile === 'object') {
     return {
-      nameOfKey: currentKey, depth: nestling, childrens: iter(nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey], nestling + 1),
+      nameOfKey: currentKey,
+      depth: nestling,
+      childrens: iter(nodeFromFirstFile[currentKey],
+        nodeFromSecondFile[currentKey], nestling + 1),
     };
   }
 };
-const partial = (fn, firstArg, secondArg, thirdArg, iter) => (fourArg) => fn(firstArg, secondArg, thirdArg, iter, fourArg);
+const partial = (fn, arg1, arg2, arg3, iter) => (fourArg) => fn(arg1, arg2, arg3, iter, fourArg);
 
 const buildAst = (firstConfig, secondConfig) => {
   const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
