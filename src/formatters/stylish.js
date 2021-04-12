@@ -15,16 +15,16 @@ const getValue = (valueKey, depth) => {
 const parseCurrentNode = (node, iter) => {
   const currentIndent = node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
   if (node.childrens.length !== 0) {
-    return `\n${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}`;
+    return node.depth === 1 ? `${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}` : `\n${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}`;
   }
   return parseCurrentNode.states[node.status](node, currentIndent);
 };
 parseCurrentNode.states = {
-  added: (currentNode, currentIndent) => `\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
-  deleted: (currentNode, currentIndent) => `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  added: (currentNode, currentIndent) => currentNode.depth === 1 ? `${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}` : `\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  deleted: (currentNode, currentIndent) => currentNode.depth === 1 ? `${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}` : `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
   no_changed: (currentNode, currentIndent) => `\n${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
   updated: (currentNode, currentIndent) => `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value[0], currentNode.depth + 1)}
-\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
+${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
 
 };
 const stylish = (ast) => {
@@ -33,11 +33,11 @@ const stylish = (ast) => {
     return lines;
   };
   const result = iter(ast);
-  return JSON.stringify([
+  return [
     '{',
     ...result,
     '}',
-  ].join('\n'), null, ' ');
+  ].join('\n');
 };
 
 export default stylish;
