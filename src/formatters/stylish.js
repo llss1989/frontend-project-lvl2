@@ -13,7 +13,6 @@ const getValue = (valueKey, depth) => {
     `${closeBracketIndent}}`].join('\n');
 };
 const parseCurrentNode = (node, iter) => {
-  // console.log(node)
   const currentIndent = node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
   if (node.childrens.length !== 0) {
     return `\n${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}`;
@@ -25,7 +24,7 @@ parseCurrentNode.states = {
   deleted: (currentNode, currentIndent) => `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
   no_changed: (currentNode, currentIndent) => `\n${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
   updated: (currentNode, currentIndent) => `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value[0], currentNode.depth + 1)}
-${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
+\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
 
 };
 const stylish = (ast) => {
@@ -34,11 +33,11 @@ const stylish = (ast) => {
     return lines;
   };
   const result = iter(ast);
-  return [
+  return JSON.stringify([
     '{',
     ...result,
-    '\n}',
-  ].join('');
+    '}',
+  ].join('\n'), null, ' ');
 };
 
 export default stylish;
