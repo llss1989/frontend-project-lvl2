@@ -22,7 +22,7 @@ const parseCurrentNode = (node, iter) => {
 parseCurrentNode.states = {
   added: (currentNode, currentIndent) => currentNode.depth === 1 ? `${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}` : `\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
   deleted: (currentNode, currentIndent) => currentNode.depth === 1 ? `${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}` : `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
-  no_changed: (currentNode, currentIndent) => `\n${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  no_changed: (currentNode, currentIndent) => currentNode.depth === 1 ? `${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}` : `\n${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
   updated: (currentNode, currentIndent) => `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value[0], currentNode.depth + 1)}
 ${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
 
