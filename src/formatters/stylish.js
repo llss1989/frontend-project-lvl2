@@ -12,40 +12,33 @@ const getValue = (valueKey, depth) => {
     ...lines,
     `${closeBracketIndent}}`].join('\n');
 };
+const parseCurrentNode = (node, iter) => {
+  // console.log(node)
+  const currentIndent = node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
+  if (node.childrens.length !== 0) {
+    return `\n${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}`;
+  }
+  return parseCurrentNode.states[node.status](node, currentIndent);
+};
+parseCurrentNode.states = {
+  added: (currentNode, currentIndent) => `\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  deleted: (currentNode, currentIndent) => `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  no_changed: (currentNode, currentIndent) => `\n${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  updated: (currentNode, currentIndent) => `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value[0], currentNode.depth + 1)}
+${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
+
+};
 const stylish = (ast) => {
   const iter = (tree) => {
-    const lines = tree.reduce((acc, node) => {
-      const currentIndent = node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
-      if (node.childrens.length === 0) {
-        if (node.status === 'added') {
-          acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
-        }
-        if (node.status === 'deleted') {
-          acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
-        }
-        if (node.status === 'no_changed') {
-          acc.push(`${currentIndent}  ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`);
-        }
-        if (node.status === 'updated') {
-          acc.push(`${currentIndent}- ${node.nameOfKey}: ${getValue(node.value[0], node.depth + 1)}`);
-          acc.push(`${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value[1], node.depth + 1)}`);
-        }
-      }
-      if (node.childrens.length !== 0) {
-        acc.push(`${currentIndent}${node.nameOfKey}: {`);
-        acc.push(iter(node.childrens));
-        acc.push(`${currentIndent}}`);
-      }
-      return acc.flat(1);
-    }, []);
+    const lines = tree.map((node) => parseCurrentNode(node, iter));
     return lines;
   };
   const result = iter(ast);
   return [
     '{',
     ...result,
-    '}',
-  ].join('\n');
+    '\n}',
+  ].join('');
 };
 
 export default stylish;
