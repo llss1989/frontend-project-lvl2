@@ -15,7 +15,7 @@ const getValue = (valueKey, depth) => {
 const parseCurrentNode = (node, iter) => {
   const currentIndent = node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
   if (node.childrens.length !== 0) {
-    return `\n${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}`;
+    return node.depth === 1 ? `${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}` : `\n${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}`;
   }
   return parseCurrentNode.states[node.status](node, currentIndent);
 };
