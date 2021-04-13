@@ -66,8 +66,7 @@ const buildAst = (firstConfig, secondConfig) => {
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
     const partialParseNode = partial(parseSubNode, nodeFromFirstFile,
       nodeFromSecondFile, nestling, iter);
-    const sortedKeys = _.sortBy(_.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile));
-    const ast = sortedKeys
+    const ast = _.sortBy(_.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile))
       .map(partialParseNode);
     return ast.filter((x) => x !== undefined);
   };
