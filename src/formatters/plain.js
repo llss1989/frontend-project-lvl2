@@ -1,16 +1,11 @@
-import _ from 'lodash';
-
-const isPrimitive = (value) => ((_.isNil(value) || _.isNumber(value) || _.isBoolean(value) || _.isString(value) || typeof value === 'symbol') ? 'primitive' : 'object');
+import isPrimitiveOrObject from './index.js';
 
 const getValueForPlain = (value) => {
   const typesOfValueOfPlainStates = {
-    string: () => `'${value}'`,
-    object: () => value === null ? value: '[complex value]',
-    number: () => value,
-    boolean: () => value,
-    undefined: () => value,
+    primitive: () => (typeof value === 'string' ? `'${value}'` : value),
+    object: () => (value === null ? value : '[complex value]'),
   };
-  return typesOfValueOfPlainStates[typeof (value)]();
+  return typesOfValueOfPlainStates[isPrimitiveOrObject(value)]();
 };
 
 const parseCurrentNode = (currentNode, keyPath, iter) => {

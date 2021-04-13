@@ -22,8 +22,8 @@ const getTypeOfValue = (typeOfValue) => {
 };
 
 const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling, iter, currentKey) => {
-  const typeOfKeyValueFromFirstFile = getTypeOfValue(typeof(nodeFromFirstFile[currentKey]));
-  const typeOfKeyValueFromSecondFile = getTypeOfValue(typeof(nodeFromSecondFile[currentKey]));
+  const typeOfKeyValueFromFirstFile = getTypeOfValue(typeof nodeFromFirstFile[currentKey]);
+  const typeOfKeyValueFromSecondFile = getTypeOfValue(typeof nodeFromSecondFile[currentKey]);
   if (typeOfKeyValueFromFirstFile === 'primitive' && (typeOfKeyValueFromSecondFile === 'primitive')) {
     return {
       nameOfKey: currentKey, depth: nestling, childrens: [], status: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated', value: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? nodeFromFirstFile[currentKey] : [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],

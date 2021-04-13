@@ -1,10 +1,9 @@
+import isPrimitiveOrObject from './index.js';
+
 const getValue = (valueKey, depth) => {
   const currentIndent = '  '.repeat(depth * 2);
   const closeBracketIndent = '  '.repeat(depth * 2 - 2);
   if (typeof (valueKey) !== 'object' || valueKey === null) {
-    if (valueKey === '') {
-      return `${valueKey}`;
-    }
     return valueKey;
   }
   const lines = Object.entries(valueKey).map(([key, currentValue]) => `${currentIndent}${key}: ${getValue(currentValue, depth + 1)}`);
