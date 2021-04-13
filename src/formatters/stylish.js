@@ -12,20 +12,23 @@ const getValue = (valueKey, depth) => {
     ...lines,
     `${closeBracketIndent}}`].join('\n');
 };
-const checkIndentNeededStates = {
-  true: '',
-  false: '\n',
-};
-const checkIndentNeeded = (depth) => checkIndentNeededStates[depth === 1];
-const parseCurrentNodeStates = {
-  added: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
-  deleted: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
-  no_changed: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
-  updated: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value[0], currentNode.depth + 1)}\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
 
+const checkIndentNeeded = (depth) => {
+  const checkIndentNeededStates = {
+    true: '',
+    false: '\n',
+  };
+  return checkIndentNeededStates[depth === 1];
 };
+
 const parseCurrentNode = (node, iter) => {
   const currentIndent = node.status === undefined ? '  '.repeat((node.depth * 2)) : '  '.repeat((node.depth * 2) - 1);
+  const parseCurrentNodeStates = {
+    added: () => `${checkIndentNeeded(node.depth)}${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`,
+    deleted: () => `${checkIndentNeeded(node.depth)}${currentIndent}- ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`,
+    no_changed: () => `${checkIndentNeeded(node.depth)}${currentIndent}  ${node.nameOfKey}: ${getValue(node.value, node.depth + 1)}`,
+    updated: () => `${checkIndentNeeded(node.depth)}${currentIndent}- ${node.nameOfKey}: ${getValue(node.value[0], node.depth + 1)}\n${currentIndent}+ ${node.nameOfKey}: ${getValue(node.value[1], node.depth + 1)}`,
+  };
   if (node.childrens.length !== 0) {
     return node.depth === 1 ? `${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}` : `\n${currentIndent}${node.nameOfKey}: {${iter(node.childrens)}\n${currentIndent}}`;
   }
