@@ -9,7 +9,7 @@ const getValueForPlain = (value) => {
 
 const buildNewKeyPath = (currentNode, keyPath) => buildNewKeyPath.states[keyPath === ''](currentNode, keyPath);
 buildNewKeyPath.states = {
-  true: (currentNode) => `${currentNode.nameOfKey}`,
+  true: (currentNode, keyPath) => `${currentNode.nameOfKey}`,
   false: (currentNode, keyPath) => `${keyPath}.${currentNode.nameOfKey}`,
 };
 
