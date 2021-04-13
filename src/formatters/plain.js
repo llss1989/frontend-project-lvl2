@@ -15,6 +15,7 @@ const parseCurrentNode = (currentNode, keyPath, iter) => {
     updated: () => `Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
     no_changed: () => null,
   };
+  
   if (currentNode.childrens.length > 0) {
     return iter(currentNode.childrens, `${newKeyPath}`);
   }
