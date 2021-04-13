@@ -17,7 +17,6 @@ const checkIndentNeededStates = {
   false: '\n',
 };
 const checkIndentNeeded = (depth) => checkIndentNeededStates[depth === 1];
-
 const parseCurrentNodeStates = {
   added: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
   deleted: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
