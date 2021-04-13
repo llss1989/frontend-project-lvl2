@@ -6,8 +6,15 @@ const getValueForPlain = (value) => {
   }
   return value;
 };
+
+const buildNewKeyPath = (currentNode, keyPath) => buildNewKeyPath.states[keyPath === ''](currentNode, keyPath);
+buildNewKeyPath.states = {
+  true: (currentNode) => `${currentNode.nameOfKey}`,
+  false: (currentNode, keyPath) => `${keyPath}.${currentNode.nameOfKey}`,
+};
+
 const parseCurrentNode = (currentNode, keyPath, iter) => {
-  const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}` : `${currentNode.nameOfKey}`;
+  const newKeyPath = buildNewKeyPath(currentNode, keyPath);
   if (currentNode.childrens.length > 0) {
     return iter(currentNode.childrens, `${newKeyPath}`);
   }
