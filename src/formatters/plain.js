@@ -6,20 +6,21 @@ const getValueForPlain = (value) => {
   }
   return value;
 };
+const parseCurrentNodeStates = {
+  added: (newKeyPath, currentNode) => `Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`,
+  deleted: (newKeyPath) => `Property '${newKeyPath}' was removed`,
+  updated: (newKeyPath, currentNode) => `Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
+  no_changed: () => null,
+};
 
 const parseCurrentNode = (currentNode, keyPath, iter) => {
   const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}` : `${currentNode.nameOfKey}`;
   if (currentNode.childrens.length > 0) {
     return iter(currentNode.childrens, `${newKeyPath}`);
   }
-  return parseCurrentNode.states[currentNode.status](newKeyPath, currentNode);
+  return parseCurrentNodeStates[currentNode.status](newKeyPath, currentNode);
 };
-parseCurrentNode.states = {
-  added: (newKeyPath, currentNode) => `Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`,
-  deleted: (newKeyPath) => `Property '${newKeyPath}' was removed`,
-  updated: (newKeyPath, currentNode) => `Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
-  no_changed: () => null,
-};
+
 
 const plain = (ast) => {
   const iter = (tree, keyPath) => {
