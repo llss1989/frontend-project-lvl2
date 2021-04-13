@@ -3,16 +3,12 @@ import plain from './formatters/plain.js';
 import json from './formatters/json.js';
 
 const render = (format, ast) => {
-  if (format === 'stylish') {
-    return stylish(ast);
-  }
-  if (format === 'plain') {
-    return plain(ast);
-  }
-  if (format === 'json') {
-    return json(ast);
-  }
-  throw Error('Hello from gendiff!');
+  const renderStates = {
+    stylish: () => stylish(ast),
+    plain: () => plain(ast),
+    json: () => json(ast),
+  };
+  return renderStates[format]();
 };
 
 export default render;
