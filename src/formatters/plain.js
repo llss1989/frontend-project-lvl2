@@ -14,11 +14,10 @@ buildNewKeyPath.states = {
 };
 
 const parseCurrentNode = (currentNode, keyPath, iter) => {
-  const newKeyPath = buildNewKeyPath(currentNode, keyPath);
   if (currentNode.childrens.length > 0) {
-    return iter(currentNode.childrens, `${newKeyPath}`);
+    return iter(currentNode.childrens, `${buildNewKeyPath(currentNode, keyPath)}`);
   }
-  return parseCurrentNode.states[currentNode.status](newKeyPath, currentNode);
+  return parseCurrentNode.states[currentNode.status](buildNewKeyPath(currentNode, keyPath), currentNode);
 };
 parseCurrentNode.states = {
   added: (currentNode, keyPath) => `Property '${buildNewKeyPath(currentNode, keyPath)}' was added with value: ${getValueForPlain(currentNode.value)}`,
