@@ -19,11 +19,17 @@ const parseCurrentNode = (node, iter) => {
   }
   return parseCurrentNode.states[node.status](node, currentIndent);
 };
+const checkIndentNeeded = (depth) => checkIndentNeeded.states[depth === 1];
+checkIndentNeeded.states = {
+  true: '',
+  false: '\n',
+};
+
 parseCurrentNode.states = {
-  added: (currentNode, currentIndent) => currentNode.depth === 1 ? `${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}` : `\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
-  deleted: (currentNode, currentIndent) => currentNode.depth === 1 ? `${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}` : `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
-  no_changed: (currentNode, currentIndent) => currentNode.depth === 1 ? `${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}` : `\n${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
-  updated: (currentNode, currentIndent) => `\n${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value[0], currentNode.depth + 1)}\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
+  added: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  deleted: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  no_changed: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}  ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
+  updated: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}- ${currentNode.nameOfKey}: ${getValue(currentNode.value[0], currentNode.depth + 1)}\n${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value[1], currentNode.depth + 1)}`,
 
 };
 const stylish = (ast) => {
