@@ -43,13 +43,13 @@ const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling, iter, cur
       nameOfKey: currentKey, depth: nestling, childrens: [], status: 'updated', value: [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
     };
   }
-  if (typeOfKeyValueFromFirstFile === 'object'
-  && typeOfKeyValueFromSecondFile === 'object') {
+  if (typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'object') {
     return {
       nameOfKey: currentKey,
       depth: nestling,
       childrens: iter(nodeFromFirstFile[currentKey],
-        nodeFromSecondFile[currentKey], nestling + 1),
+        nodeFromSecondFile[currentKey],
+        nestling + 1),
     };
   }
   throw Error('error from buildAst!');

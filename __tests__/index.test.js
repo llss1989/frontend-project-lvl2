@@ -13,11 +13,12 @@ test('json', () => {
 });
 const cases = [['before.json', 'after.json', 'stylish'], ['before.yml', 'after.json', 'plain'], ['before.yml', 'after.json', 'plain']];
 
-describe('add utility', () => {
-  test.each(cases)(
-    'test different formatteres',
-    (firstFile, secondFile, formatter) => {
-      expect(genDiff(getPathOfFile(firstFile), getPathOfFile(secondFile), formatter)).toEqual(getResult(getPathOfFile(`${formatter}Expected`)));
-    },
-  );
+test('stylish', () => {
+  expect(genDiff(getPathOfFile('before.json'), getPathOfFile('after.json'))).toEqual(getResult(getPathOfFile('stylishExpected')));
+});
+test('plain with yml files', () => {
+  expect(genDiff(getPathOfFile('before.yml'), getPathOfFile('after.yml'))).toEqual(getResult(getPathOfFile('stylishExpected')));
+});
+test('work with different file types', () => {
+  expect(genDiff(getPathOfFile('before.yml'), getPathOfFile('after.json'))).toEqual(getResult(getPathOfFile('stylishExpected')));
 });
