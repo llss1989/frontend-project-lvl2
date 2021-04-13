@@ -7,22 +7,17 @@ const getValueForPlain = (value) => {
   return value;
 };
 
-const buildNewKeyPath = (currentNode, keyPath) => buildNewKeyPath.states[keyPath === ''](currentNode, keyPath);
-buildNewKeyPath.states = {
-  true: (currentNode, keyPath) => `${currentNode.nameOfKey}`,
-  false: (currentNode, keyPath) => `${keyPath}.${currentNode.nameOfKey}`,
-};
-
 const parseCurrentNode = (currentNode, keyPath, iter) => {
+  const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}` : `${currentNode.nameOfKey}`;
   if (currentNode.childrens.length > 0) {
-    return iter(currentNode.childrens, `${buildNewKeyPath(currentNode, keyPath)}`);
+    return iter(currentNode.childrens, `${newKeyPath}`);
   }
-  return parseCurrentNode.states[currentNode.status](buildNewKeyPath(currentNode, keyPath), currentNode);
+  return parseCurrentNode.states[currentNode.status](newKeyPath, currentNode);
 };
 parseCurrentNode.states = {
-  added: (currentNode, keyPath) => `Property '${buildNewKeyPath(currentNode, keyPath)}' was added with value: ${getValueForPlain(currentNode.value)}`,
-  deleted: (currentNode, keyPath) => `Property '${buildNewKeyPath(currentNode, keyPath)}' was removed`,
-  updated: (currentNode, keyPath) => `Property '${buildNewKeyPath(currentNode, keyPath)}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
+  added: (newKeyPath, currentNode) => `Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`,
+  deleted: (newKeyPath) => `Property '${newKeyPath}' was removed`,
+  updated: (newKeyPath, currentNode) => `Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
   no_changed: () => null,
 };
 
