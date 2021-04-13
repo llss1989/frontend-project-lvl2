@@ -10,19 +10,20 @@ export const getData = (config) => {
   return [data, type];
 };
 
-const getTypeOfValue = (currentValue) => {
-  if (typeof (currentValue) === 'object') {
-    return 'object';
-  }
-  if (typeof (currentValue) === 'undefined') {
-    return 'OTC';
-  }
-  return 'primitive';
+const getTypeOfValue = (typeOfValue) => {
+  const typesOfValueStates = {
+    object: () => 'object',
+    undefined: () => 'OTC',
+    number: () => 'primitive',
+    string: () => 'primitive',
+    boolean: () => 'primitive',
+  };
+  return typesOfValueStates[typeOfValue]();
 };
 
 const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling, iter, currentKey) => {
-  const typeOfKeyValueFromFirstFile = getTypeOfValue(nodeFromFirstFile[currentKey]);
-  const typeOfKeyValueFromSecondFile = getTypeOfValue(nodeFromSecondFile[currentKey]);
+  const typeOfKeyValueFromFirstFile = getTypeOfValue(typeof(nodeFromFirstFile[currentKey]));
+  const typeOfKeyValueFromSecondFile = getTypeOfValue(typeof(nodeFromSecondFile[currentKey]));
   if (typeOfKeyValueFromFirstFile === 'primitive' && (typeOfKeyValueFromSecondFile === 'primitive')) {
     return {
       nameOfKey: currentKey, depth: nestling, childrens: [], status: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated', value: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? nodeFromFirstFile[currentKey] : [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
