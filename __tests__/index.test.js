@@ -14,8 +14,8 @@ test('json', () => {
 test('stylish', () => {
   expect(genDiff(getPathOfFile('before.json'), getPathOfFile('after.json'))).toEqual(getResult(getPathOfFile('stylishExpected')));
 });
-test('plain with yml files', () => {
-  expect(genDiff(getPathOfFile('before.yml'), getPathOfFile('after.yml'))).toEqual(getResult(getPathOfFile('stylishExpected')));
+test('plain', () => {
+  expect(genDiff(getPathOfFile('before.yml'), getPathOfFile('after.yml'), 'plain')).toEqual(getResult(getPathOfFile('plainExpected')));
 });
 test('work with different file types', () => {
   expect(genDiff(getPathOfFile('before.yml'), getPathOfFile('after.json'))).toEqual(getResult(getPathOfFile('stylishExpected')));

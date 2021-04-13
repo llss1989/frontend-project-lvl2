@@ -8,13 +8,13 @@ const getValueForPlain = (value) => {
 };
 
 const parseCurrentNode = (currentNode, keyPath, iter) => {
+  const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}` : `${currentNode.nameOfKey}`;
   const parseCurrentNodeStates = {
-    added: () => `Property '${keyPath}' was added with value: ${getValueForPlain(currentNode.value)}`,
-    deleted: () => `Property '${keyPath}' was removed`,
-    updated: () => `Property '${keyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
+    added: () => `Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`,
+    deleted: () => `Property '${newKeyPath}' was removed`,
+    updated: () => `Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
     no_changed: () => null,
   };
-  const newKeyPath = keyPath !== '' ? `${keyPath}.${currentNode.nameOfKey}` : `${currentNode.nameOfKey}`;
   if (currentNode.childrens.length > 0) {
     return iter(currentNode.childrens, `${newKeyPath}`);
   }
