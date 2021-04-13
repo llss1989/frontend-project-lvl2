@@ -19,11 +19,12 @@ const parseCurrentNode = (node, iter) => {
   }
   return parseCurrentNode.states[node.status](node, currentIndent);
 };
-const checkIndentNeeded = (depth) => checkIndentNeeded.states[depth === 1];
-checkIndentNeeded.states = {
+
+const checkIndentNeededStates = {
   true: '',
   false: '\n',
 };
+const checkIndentNeeded = (depth) => checkIndentNeededStates[depth === 1];
 
 parseCurrentNode.states = {
   added: (currentNode, currentIndent) => `${checkIndentNeeded(currentNode.depth)}${currentIndent}+ ${currentNode.nameOfKey}: ${getValue(currentNode.value, currentNode.depth + 1)}`,
