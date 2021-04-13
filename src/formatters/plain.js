@@ -21,9 +21,9 @@ const parseCurrentNode = (currentNode, keyPath, iter) => {
   return parseCurrentNode.states[currentNode.status](newKeyPath, currentNode);
 };
 parseCurrentNode.states = {
-  added: (newKeyPath, currentNode) => `Property '${newKeyPath}' was added with value: ${getValueForPlain(currentNode.value)}`,
-  deleted: (newKeyPath) => `Property '${newKeyPath}' was removed`,
-  updated: (newKeyPath, currentNode) => `Property '${newKeyPath}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
+  added: (currentNode, keyPath) => `Property '${buildNewKeyPath(currentNode, keyPath)}' was added with value: ${getValueForPlain(currentNode.value)}`,
+  deleted: (currentNode, keyPath) => `Property '${buildNewKeyPath(currentNode, keyPath)}' was removed`,
+  updated: (currentNode, keyPath) => `Property '${buildNewKeyPath(currentNode, keyPath)}' was updated. From ${getValueForPlain(currentNode.value[0])} to ${getValueForPlain(currentNode.value[1])}`,
   no_changed: () => null,
 };
 
