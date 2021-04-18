@@ -12,18 +12,56 @@ export const getData = (config) => {
 
 const getTypeOfValue = (typeOfValue) => {
   const typesOfValueStates = {
-    object: () => 'object',
-    undefined: () => 'OTC',
-    number: () => 'primitive',
-    string: () => 'primitive',
-    boolean: () => 'primitive',
+    object: 'object',
+    undefined: 'OTC',
+    number: 'primitive',
+    string: 'primitive',
+    boolean: 'primitive',
   };
-  return typesOfValueStates[typeOfValue]();
+  return typesOfValueStates[typeOfValue];
 };
 
 const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling, iter, currentKey) => {
   const typeOfKeyValueFromFirstFile = getTypeOfValue(typeof nodeFromFirstFile[currentKey]);
   const typeOfKeyValueFromSecondFile = getTypeOfValue(typeof nodeFromSecondFile[currentKey]);
+  // const typesOfKeyValuesOfBothFiles = {
+  //   primitive: {
+  //     primitive: {
+  //       nameOfKey: currentKey, depth: nestling, childrens: [], status: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated', value: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? nodeFromFirstFile[currentKey] : [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
+  //     },
+  //     OTC: {
+  //       nameOfKey: currentKey, depth: nestling, childrens: [], status: 'deleted', value: nodeFromFirstFile[currentKey],
+  //     },
+  //     object: {
+  //       nameOfKey: currentKey, depth: nestling, childrens: [], status: 'updated', value: [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
+  //     },
+  //   },
+  //   OTC: {
+  //     primitive: {
+  //       nameOfKey: currentKey, depth: nestling, childrens: [], status: 'added', value: nodeFromSecondFile[currentKey],
+  //     },
+  //     object: {
+  //       nameOfKey: currentKey, depth: nestling, childrens: [], status: 'added', value: nodeFromSecondFile[currentKey],
+  //     },
+  //   },
+  //   object: {
+  //     OTC: {
+  //       nameOfKey: currentKey, depth: nestling, childrens: [], status: 'deleted', value: nodeFromFirstFile[currentKey],
+  //     },
+  //     primitive: {
+  //       nameOfKey: currentKey, depth: nestling, childrens: [], status: 'updated', value: [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
+  //     },
+  //     object: {
+  //       nameOfKey: currentKey,
+  //       depth: nestling,
+  //       childrens: iter(nodeFromFirstFile[currentKey],
+  //         nodeFromSecondFile[currentKey],
+  //         nestling + 1),
+  //     },
+  //   },
+  // };
+  // console.log(typesOfKeyValuesOfBothFiles[typeOfKeyValueFromFirstFile][typeOfKeyValueFromSecondFile])
+  // return typesOfKeyValuesOfBothFiles[typeOfKeyValueFromFirstFile][typeOfKeyValueFromSecondFile];
   if (typeOfKeyValueFromFirstFile === 'primitive' && (typeOfKeyValueFromSecondFile === 'primitive')) {
     return {
       nameOfKey: currentKey, depth: nestling, childrens: [], status: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated', value: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? nodeFromFirstFile[currentKey] : [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
@@ -63,6 +101,8 @@ const buildAst = (firstConfig, secondConfig) => {
   const supportedDataOfFirstFile = parse(dataOfFirstFile, typeOfFirstFile);
   const supportedDataOfSecondFile = parse(dataOfSecondFile, typeOfSecondFile);
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
+    console.log(nodeFromFirstFile);
+    console.log(nodeFromSecondFile);
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
     const partialParseNode = partial(parseSubNode, nodeFromFirstFile,
