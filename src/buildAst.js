@@ -18,6 +18,7 @@ const getTypeOfValue = (typeOfValue) => {
     string: 'primitive',
     boolean: 'primitive',
   };
+  
   return typesOfValueStates[typeOfValue];
 };
 
