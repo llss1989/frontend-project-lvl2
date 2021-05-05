@@ -1,14 +1,4 @@
 import _ from 'lodash';
-import path from 'path';
-import fs from 'fs';
-import parse from './parsers.js';
-
-export const getData = (config) => {
-  const type = path.extname(config).slice(1);
-  const filepath = path.resolve(process.cwd(), config);
-  const data = fs.readFileSync(filepath, 'utf8');
-  return [data, type];
-};
 
 const getTypeOfValue = (typeOfValue) => {
   const typesOfValueStates = {
@@ -56,11 +46,11 @@ const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1, iter,
   throw Error('error from buildAst!');
 };
 
-const buildAst = (firstConfig, secondConfig) => {
-  const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
-  const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
-  const supportedDataOfFirstFile = parse(dataOfFirstFile, typeOfFirstFile);
-  const supportedDataOfSecondFile = parse(dataOfSecondFile, typeOfSecondFile);
+const buildAst = (parseDataFromFirstFile, dataFromSecondFile) => {
+  // const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
+  // const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
+  // const supportedDataOfFirstFile = parse(dataOfFirstFile, typeOfFirstFile);
+  // const supportedDataOfSecondFile = parse(dataOfSecondFile, typeOfSecondFile);
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
@@ -70,6 +60,6 @@ const buildAst = (firstConfig, secondConfig) => {
       .map((x) => parseSubNode(nodeFromFirstFile, nodeFromSecondFile, nestling, iter, x));
     return ast.filter((x) => x !== undefined);
   };
-  return iter(supportedDataOfFirstFile, supportedDataOfSecondFile);
+  return iter(parseDataFromFirstFile, dataFromSecondFile);
 };
 export default buildAst;
