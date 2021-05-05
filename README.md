@@ -1,8 +1,6 @@
 ### Hexlet tests and linter status:
-[![hexlet-check](https://github.com/llss1989/frontend-project-lvl2/actions/workflows/hexlet-check.yml/badge.svg?branch=main)](https://github.com/llss1989/frontend-project-lvl2/actions/workflows/hexlet-check.yml)
-
-[![Maintainability](https://api.codeclimate.com/v1/badges/b4e4e023d03c31f70027/maintainability)](https://codeclimate.com/github/llss1989/frontend-project-lvl2/maintainability)
-
+[![hexlet-check](https://github.com/llss1989/frontend-project-lvl2/actions/workflows/hexlet-check.yml/badge.svg?branch=main)](https://github.com/llss1989/frontend-project-lvl2/actions/workflows/hexlet-check.yml) 
+[![Maintainability](https://api.codeclimate.com/v1/badges/b4e4e023d03c31f70027/maintainability)](https://codeclimate.com/github/llss1989/frontend-project-lvl2/maintainability) 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/b4e4e023d03c31f70027/test_coverage)](https://codeclimate.com/github/llss1989/frontend-project-lvl2/test_coverage)
 
 How gendiff works:
