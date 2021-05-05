@@ -11,54 +11,46 @@ const getTypeOfValue = (typeOfValue) => {
   return typesOfValueStates[typeOfValue];
 };
 
-const parseSubNode = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1, iter, currentKey) => {
-  const typeOfKeyValueFromFirstFile = getTypeOfValue(typeof nodeFromFirstFile[currentKey]);
-  const typeOfKeyValueFromSecondFile = getTypeOfValue(typeof nodeFromSecondFile[currentKey]);
-  if (typeOfKeyValueFromFirstFile === 'primitive' && (typeOfKeyValueFromSecondFile === 'primitive')) {
-    return {
-      nameOfKey: currentKey, depth: nestling, childrens: [], status: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated', value: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? nodeFromFirstFile[currentKey] : [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
-    };
-  }
-  if (typeOfKeyValueFromFirstFile === 'OTC' && (typeOfKeyValueFromSecondFile === 'primitive' || 'object')) {
-    return {
-      nameOfKey: currentKey, depth: nestling, childrens: [], status: 'added', value: nodeFromSecondFile[currentKey],
-    };
-  }
-  if ((typeOfKeyValueFromFirstFile === 'primitive' || 'object') && (typeOfKeyValueFromSecondFile === 'OTC')) {
-    return {
-      nameOfKey: currentKey, depth: nestling, childrens: [], status: 'deleted', value: nodeFromFirstFile[currentKey],
-    };
-  }
-  if ((typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'primitive') || (typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'object')) {
-    return {
-      nameOfKey: currentKey, depth: nestling, childrens: [], status: 'updated', value: [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
-    };
-  }
-  if (typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'object') {
-    return {
-      nameOfKey: currentKey,
-      depth: nestling,
-      childrens: iter(nodeFromFirstFile[currentKey],
-        nodeFromSecondFile[currentKey],
-        nestling + 1),
-    };
-  }
-  throw Error('error from buildAst!');
-};
-
 const buildAst = (parseDataFromFirstFile, dataFromSecondFile) => {
-  // const [dataOfFirstFile, typeOfFirstFile] = getData(firstConfig);
-  // const [dataOfSecondFile, typeOfSecondFile] = getData(secondConfig);
-  // const supportedDataOfFirstFile = parse(dataOfFirstFile, typeOfFirstFile);
-  // const supportedDataOfSecondFile = parse(dataOfSecondFile, typeOfSecondFile);
   const iter = (nodeFromFirstFile, nodeFromSecondFile, nestling = 1) => {
     const keysOfDataOfFirstFile = Object.keys(nodeFromFirstFile);
     const keyOfDataOfSecondFile = Object.keys(nodeFromSecondFile);
-    // const partialParseNode = partial(parseSubNode, nodeFromFirstFile,
-    //   nodeFromSecondFile, nestling, iter);
     const ast = _.sortBy(_.union(keysOfDataOfFirstFile, keyOfDataOfSecondFile))
-      .map((x) => parseSubNode(nodeFromFirstFile, nodeFromSecondFile, nestling, iter, x));
-    return ast.filter((x) => x !== undefined);
+      .map((currentKey) => {
+        const typeOfKeyValueFromFirstFile = getTypeOfValue(typeof nodeFromFirstFile[currentKey]);
+        const typeOfKeyValueFromSecondFile = getTypeOfValue(typeof nodeFromSecondFile[currentKey]);
+        if (typeOfKeyValueFromFirstFile === 'primitive' && (typeOfKeyValueFromSecondFile === 'primitive')) {
+          return {
+            nameOfKey: currentKey, depth: nestling, childrens: [], status: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? 'no_changed' : 'updated', value: nodeFromFirstFile[currentKey] === nodeFromSecondFile[currentKey] ? nodeFromFirstFile[currentKey] : [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
+          };
+        }
+        if (typeOfKeyValueFromFirstFile === 'OTC' && (typeOfKeyValueFromSecondFile === 'primitive' || 'object')) {
+          return {
+            nameOfKey: currentKey, depth: nestling, childrens: [], status: 'added', value: nodeFromSecondFile[currentKey],
+          };
+        }
+        if ((typeOfKeyValueFromFirstFile === 'primitive' || 'object') && (typeOfKeyValueFromSecondFile === 'OTC')) {
+          return {
+            nameOfKey: currentKey, depth: nestling, childrens: [], status: 'deleted', value: nodeFromFirstFile[currentKey],
+          };
+        }
+        if ((typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'primitive') || (typeOfKeyValueFromFirstFile === 'primitive' && typeOfKeyValueFromSecondFile === 'object')) {
+          return {
+            nameOfKey: currentKey, depth: nestling, childrens: [], status: 'updated', value: [nodeFromFirstFile[currentKey], nodeFromSecondFile[currentKey]],
+          };
+        }
+        if (typeOfKeyValueFromFirstFile === 'object' && typeOfKeyValueFromSecondFile === 'object') {
+          return {
+            nameOfKey: currentKey,
+            depth: nestling,
+            childrens: iter(nodeFromFirstFile[currentKey],
+              nodeFromSecondFile[currentKey],
+              nestling + 1),
+          };
+        }
+        return true;
+      });
+    return ast;
   };
   return iter(parseDataFromFirstFile, dataFromSecondFile);
 };

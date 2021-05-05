@@ -7,6 +7,5 @@ const getData = (config) => {
   const data = fs.readFileSync(filepath, 'utf8');
   return [data, type];
 };
-const getDatasFromBothFiles = (filepath1, filepath2) => [getData(filepath1), getData(filepath2)];
 
-export default getDatasFromBothFiles;
+export default getData;
